@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RuleSet Name="Code Analysis Rule Set" Description="Code Analysis Rules for Scaffold" ToolsVersion="15.0">
+
+  <!-- https://docs.microsoft.com/dotnet/fundamentals/code-analysis/overview -->
+  <!-- https://docs.microsoft.com/dotnet/fundamentals/code-analysis/quality-rules -->
+  <!-- https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules -->
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.Diagnostics" RuleNamespace="Microsoft.CodeAnalysis.Diagnostics">
+    <Rule Id="IDE0003" Action="None" />
+    <Rule Id="IDE0005" Action="Info" />
+    <Rule Id="IDE0021" Action="Info" />
+    <Rule Id="IDE0022" Action="Info" />
+    <Rule Id="IDE0055" Action="Warning" />
+    <Rule Id="IDE0065" Action="None" />
+    <Rule Id="IDE0090" Action="None" />
+  </Rules>
+
+  <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers">
+  </Rules>
+
+  <!-- https://rules.sonarsource.com/csharp -->
+  <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
+  </Rules>
+
+  <!-- https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/DOCUMENTATION.md -->
+  <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+    <Rule Id="SA0001" Action="None" />
+    <Rule Id="SA1600" Action="None" />
+    <Rule Id="SA1601" Action="None" />
+    <Rule Id="SA1623" Action="None" />
+    <Rule Id="SA1633" Action="None" />
+    <Rule Id="SA1652" Action="None" />
+  </Rules>
+
+</RuleSet>
