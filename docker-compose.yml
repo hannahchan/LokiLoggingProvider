@@ -1,0 +1,44 @@
+---
+services:
+  grafana:
+    depends_on:
+      - loki
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Editor
+    image: grafana/grafana
+    ports:
+      - mode: ingress
+        protocol: tcp
+        published: 3000
+        target: 3000
+    volumes:
+      - source: grafana
+        target: /var/lib/grafana
+        type: volume
+      - source: ./Operations/Grafana/dashboards
+        target: /etc/grafana/provisioning/dashboards
+        type: bind
+      - source: ./Operations/Grafana/datasources
+        target: /etc/grafana/provisioning/datasources
+        type: bind
+  loki:
+    command: -config.file=/etc/loki/local-config.yaml
+    image: grafana/loki
+    ports:
+      - mode: ingress
+        protocol: tcp
+        published: 3100
+        target: 3100
+      - mode: ingress
+        protocol: tcp
+        published: 9095
+        target: 9095
+    volumes:
+      - source: loki
+        target: /loki
+        type: volume
+version: "3.7"
+volumes:
+  grafana: ~
+  loki: ~
