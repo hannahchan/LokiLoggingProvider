@@ -7,7 +7,7 @@
       "commands": ["dotnet-cake"]
     },
     "cyclonedx": {
-      "version": "1.5.0",
+      "version": "1.5.1",
       "commands": ["dotnet-CycloneDX"]
     },
     "dotnet-grpc": {
@@ -19,11 +19,11 @@
       "commands": ["dotnet-outdated"]
     },
     "dotnet-reportgenerator-globaltool": {
-      "version": "4.8.8",
+      "version": "4.8.11",
       "commands": ["reportgenerator"]
     },
     "dotnet-stryker": {
-      "version": "0.22.4",
+      "version": "0.22.5",
       "commands": ["dotnet-stryker"]
     }
   }
