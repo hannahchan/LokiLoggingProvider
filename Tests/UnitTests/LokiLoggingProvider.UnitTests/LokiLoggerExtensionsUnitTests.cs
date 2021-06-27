@@ -92,6 +92,102 @@ namespace LokiLoggingProvider.UnitTests
                 });
         }
 
+        [Fact]
+        public void When_AddingLokiLoggerWithConfigureAction_Expect_LokiLoggerAdded()
+        {
+            // Arrange
+            ILoggingBuilder builder = new MockLoggingBuilder();
+
+            // Act
+            builder.AddLoki(configure => configure.StaticLabelOptions.JobName = nameof(LokiLoggerExtensionsUnitTests));
+
+            // Assert
+            IServiceProvider serviceProvider = builder.Services.BuildServiceProvider();
+
+            IOptions<LokiLoggerOptions> options = serviceProvider.GetService<IOptions<LokiLoggerOptions>>();
+            IOptionsSnapshot<LokiLoggerOptions> optionsSnapshot = serviceProvider.GetService<IOptionsSnapshot<LokiLoggerOptions>>();
+            IOptionsMonitor<LokiLoggerOptions> optionsMonitor = serviceProvider.GetService<IOptionsMonitor<LokiLoggerOptions>>();
+
+            Assert.NotNull(options);
+            Assert.NotNull(optionsSnapshot);
+            Assert.NotNull(optionsMonitor);
+
+            Assert.Equal(nameof(LokiLoggerExtensionsUnitTests), options.Value.StaticLabelOptions.JobName);
+            Assert.Equal(nameof(LokiLoggerExtensionsUnitTests), optionsSnapshot.Value.StaticLabelOptions.JobName);
+            Assert.Equal(nameof(LokiLoggerExtensionsUnitTests), optionsMonitor.CurrentValue.StaticLabelOptions.JobName);
+
+            Assert.IsType<LokiLoggerProvider>(serviceProvider.GetService<ILoggerProvider>());
+
+            Assert.Collection(
+                builder.Services,
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(ILoggerProviderConfigurationFactory), serviceDescriptor.ServiceType);
+                    Assert.NotNull(serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(ILoggerProviderConfiguration<>), serviceDescriptor.ServiceType);
+                    Assert.NotNull(serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(IOptions<>), serviceDescriptor.ServiceType);
+                    Assert.Equal(typeof(OptionsManager<>), serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Scoped, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(IOptionsSnapshot<>), serviceDescriptor.ServiceType);
+                    Assert.Equal(typeof(OptionsManager<>), serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(IOptionsMonitor<>), serviceDescriptor.ServiceType);
+                    Assert.Equal(typeof(OptionsMonitor<>), serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Transient, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(IOptionsFactory<>), serviceDescriptor.ServiceType);
+                    Assert.Equal(typeof(OptionsFactory<>), serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(IOptionsMonitorCache<>), serviceDescriptor.ServiceType);
+                    Assert.Equal(typeof(OptionsCache<>), serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(ILoggerProvider), serviceDescriptor.ServiceType);
+                    Assert.Equal(typeof(LokiLoggerProvider), serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(IConfigureOptions<LokiLoggerOptions>), serviceDescriptor.ServiceType);
+                    Assert.NotNull(serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(IOptionsChangeTokenSource<LokiLoggerOptions>), serviceDescriptor.ServiceType);
+                    Assert.NotNull(serviceDescriptor.ImplementationType);
+                },
+                serviceDescriptor =>
+                {
+                    Assert.Equal(ServiceLifetime.Singleton, serviceDescriptor.Lifetime);
+                    Assert.Equal(typeof(IConfigureOptions<LokiLoggerOptions>), serviceDescriptor.ServiceType);
+                    Assert.Null(serviceDescriptor.ImplementationType);
+                });
+        }
+
         private class MockLoggingBuilder : ILoggingBuilder
         {
             public IServiceCollection Services { get; } = new ServiceCollection();
