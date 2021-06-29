@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Sources\LokiLoggingProvider\LokiLoggingProvider.csproj" />
+    <ProjectReference Include="..\..\Sources\LokiLoggingProvider\LokiLoggingProvider.csproj" />
   </ItemGroup>
 
 </Project>

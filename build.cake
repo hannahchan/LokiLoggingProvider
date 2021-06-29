@@ -2,7 +2,7 @@
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
 
-string target = Argument("Target", "Publish");
+string target = Argument("Target", "Pack");
 
 //////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
@@ -100,37 +100,10 @@ Task("Test")
 
         DeleteDirectories(GetDirectories(coverageReports), deleteSettings);
 
-        // Coverage Report - Combined (Integration + Unit) Tests
-        // DotNetCoreTool("reportgenerator", new DotNetCoreToolSettings
-        // {
-        //     ArgumentCustomization = args => args
-        //         .Append($"-reports:\"./Tests/**/TestResults/*/coverage.cobertura.xml\"")
-        //         .Append($"-reporttypes:\"{reportTypes}\"")
-        //         .Append($"-targetdir:\"{coverageReports}/Combined\"")
-        //         .Append($"-historydir:\"{coverageHistory}/Combined\"")
-        //         .Append($"-title:\"{projectName} Combined (Integration + Unit) Tests\"")
-        //         .Append($"-verbosity:\"Error\"")
-        //         .Append($"-classfilters:\"{classFilters}\"")
-        // });
-
-        // Coverage Report - Integration Tests
-        // DotNetCoreTool("reportgenerator", new DotNetCoreToolSettings
-        // {
-        //     ArgumentCustomization = args => args
-        //         .Append($"-reports:\"./Tests/IntegrationTests/**/TestResults/*/coverage.cobertura.xml\"")
-        //         .Append($"-reporttypes:\"{reportTypes}\"")
-        //         .Append($"-targetdir:\"{coverageReports}/IntegrationTests\"")
-        //         .Append($"-historydir:\"{coverageHistory}/IntegrationTests\"")
-        //         .Append($"-title:\"{projectName} Integration Tests\"")
-        //         .Append($"-verbosity:\"Error\"")
-        //         .Append($"-classfilters:\"{classFilters}\"")
-        // });
-
-        // Coverage Report - Unit Tests
         DotNetCoreTool("reportgenerator", new DotNetCoreToolSettings
         {
             ArgumentCustomization = args => args
-                .Append($"-reports:\"./Tests/UnitTests/**/TestResults/*/coverage.cobertura.xml\"")
+                .Append($"-reports:\"./Tests/*.UnitTests/TestResults/*/coverage.cobertura.xml\"")
                 .Append($"-reporttypes:\"{reportTypes}\"")
                 .Append($"-targetdir:\"{coverageReports}/UnitTests\"")
                 .Append($"-historydir:\"{coverageHistory}/UnitTests\"")
@@ -140,7 +113,7 @@ Task("Test")
         });
     });
 
-Task("Publish")
+Task("Pack")
     .IsDependentOn("Test")
     .Does(() =>
     {
@@ -152,14 +125,14 @@ Task("Publish")
 
         DeleteDirectories(GetDirectories($"{buildArtifacts}"), deleteSettings);
 
-        DotNetCorePublishSettings settings = new DotNetCorePublishSettings
+        DotNetCorePackSettings settings = new DotNetCorePackSettings
         {
             Configuration = configuration,
             NoBuild = true,
-            OutputDirectory = $"{buildArtifacts}/LokiLoggingProvider"
+            OutputDirectory = $"{buildArtifacts}"
         };
 
-        DotNetCorePublish("./Sources/LokiLoggingProvider", settings);
+        DotNetCorePack("./Sources/LokiLoggingProvider", settings);
     });
 
 //////////////////////////////////////////////////////////////////////
