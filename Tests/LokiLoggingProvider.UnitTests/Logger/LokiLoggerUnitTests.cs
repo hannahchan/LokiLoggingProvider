@@ -1,7 +1,7 @@
 namespace LokiLoggingProvider.UnitTests.Logger
 {
-    using System;
     using System.Collections.Generic;
+    using LokiLoggingProvider.Formatters;
     using LokiLoggingProvider.Logger;
     using LokiLoggingProvider.Options;
     using LokiLoggingProvider.PushClients;
@@ -30,15 +30,15 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 MockLokiPushClient client = new MockLokiPushClient();
 
                 string categoryName = nameof(categoryName);
-                LokiLogMessageEntryProcessor processor = new LokiLogMessageEntryProcessor(client);
+                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
                 LokiLoggerOptions options = new LokiLoggerOptions();
 
                 LokiLogger logger = new LokiLogger(
                     categoryName,
+                    new SimpleFormatter(),
                     processor,
                     options.StaticLabelOptions,
-                    options.DynamicLabelOptions,
-                    options.FormatterOptions);
+                    options.DynamicLabelOptions);
 
                 // Act
                 bool result = logger.IsEnabled(logLevel);
@@ -54,19 +54,19 @@ namespace LokiLoggingProvider.UnitTests.Logger
 
         private sealed class MockLokiPushClient : ILokiPushClient
         {
-            private readonly IList<LokiLogMessageEntry> receivedLogMessageEntries = new List<LokiLogMessageEntry>();
+            private readonly IList<LokiLogEntry> receivedLogMessageEntries = new List<LokiLogEntry>();
 
             public void Dispose()
             {
                 this.receivedLogMessageEntries.Clear();
             }
 
-            public void Push(LokiLogMessageEntry entry)
+            public void Push(LokiLogEntry entry)
             {
                 this.receivedLogMessageEntries.Add(entry);
             }
 
-            public IEnumerable<LokiLogMessageEntry> GetReceivedLogMessageEntries()
+            public IEnumerable<LokiLogEntry> GetReceivedLogMessageEntries()
             {
                 return this.receivedLogMessageEntries;
             }

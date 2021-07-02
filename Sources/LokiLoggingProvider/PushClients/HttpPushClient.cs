@@ -7,7 +7,7 @@ namespace LokiLoggingProvider.PushClients
     using Google.Protobuf.WellKnownTypes;
     using LokiLoggingProvider.Logger;
 
-    internal sealed class LokiHttpPushClient : ILokiPushClient
+    internal sealed class HttpPushClient : ILokiPushClient
     {
         private const string PushEndpointV1 = "/loki/api/v1/push";
 
@@ -15,7 +15,7 @@ namespace LokiLoggingProvider.PushClients
 
         private bool disposed;
 
-        public LokiHttpPushClient(HttpClient client)
+        public HttpPushClient(HttpClient client)
         {
             this.client = client;
         }
@@ -31,11 +31,11 @@ namespace LokiLoggingProvider.PushClients
             this.disposed = true;
         }
 
-        public void Push(LokiLogMessageEntry entry)
+        public void Push(LokiLogEntry entry)
         {
             if (this.disposed)
             {
-                throw new ObjectDisposedException(nameof(LokiHttpPushClient));
+                throw new ObjectDisposedException(nameof(HttpPushClient));
             }
 
             Timestamp rfc3339Timestamp = Timestamp.FromDateTime(entry.Timestamp);

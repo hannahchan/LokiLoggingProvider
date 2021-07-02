@@ -11,7 +11,7 @@ namespace LokiLoggingProvider.UnitTests.PushClients
     using LokiLoggingProvider.PushClients;
     using Xunit;
 
-    public class LokiHttpPushClientUnitTests
+    public class HttpPushClientUnitTests
     {
         public class Dispose
         {
@@ -19,7 +19,7 @@ namespace LokiLoggingProvider.UnitTests.PushClients
             public void When_DisposingMoreThanOnce_Expect_NoExceptions()
             {
                 // Arrange
-                LokiHttpPushClient pushClient = new LokiHttpPushClient(new HttpClient());
+                HttpPushClient pushClient = new HttpPushClient(new HttpClient());
 
                 // Act
                 Exception result = Record.Exception(() =>
@@ -46,9 +46,9 @@ namespace LokiLoggingProvider.UnitTests.PushClients
                     BaseAddress = new Uri("http://localhost:3100"),
                 };
 
-                LokiHttpPushClient pushClient = new LokiHttpPushClient(httpClient);
+                HttpPushClient pushClient = new HttpPushClient(httpClient);
 
-                LokiLogMessageEntry entry = new LokiLogMessageEntry(
+                LokiLogEntry entry = new LokiLogEntry(
                     timestamp: new DateTime(2019, 11, 30, 01, 00, 00, DateTimeKind.Utc),
                     labels: new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
                     {
@@ -79,17 +79,17 @@ namespace LokiLoggingProvider.UnitTests.PushClients
             public void When_PushingLogMessageEntryWithDisposedPushClient_Expect_ObjectDisposedException()
             {
                 // Arrange
-                LokiHttpPushClient pushClient = new LokiHttpPushClient(new HttpClient());
+                HttpPushClient pushClient = new HttpPushClient(new HttpClient());
                 pushClient.Dispose();
 
-                LokiLogMessageEntry entry = new LokiLogMessageEntry(default, default, default);
+                LokiLogEntry entry = new LokiLogEntry(default, default, default);
 
                 // Act
                 Exception result = Record.Exception(() => pushClient.Push(entry));
 
                 // Assert
                 ObjectDisposedException objectDisposedException = Assert.IsType<ObjectDisposedException>(result);
-                Assert.Equal(nameof(LokiHttpPushClient), objectDisposedException.ObjectName);
+                Assert.Equal(nameof(HttpPushClient), objectDisposedException.ObjectName);
             }
         }
 

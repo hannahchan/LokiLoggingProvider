@@ -8,7 +8,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
     using LokiLoggingProvider.PushClients;
     using Xunit;
 
-    public class LokiLogMessageEntryProcessorUnitTests
+    public class LokiLogEntryProcessorUnitTests
     {
         public class Dispose
         {
@@ -17,7 +17,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             {
                 // Arrange
                 MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogMessageEntryProcessor processor = new LokiLogMessageEntryProcessor(client);
+                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
 
                 // Act
                 processor.Dispose();
@@ -31,7 +31,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             {
                 // Arrange
                 MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogMessageEntryProcessor processor = new LokiLogMessageEntryProcessor(client);
+                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
 
                 // Act
                 Exception resul = Record.Exception(() =>
@@ -52,9 +52,9 @@ namespace LokiLoggingProvider.UnitTests.Logger
             {
                 // Arrange
                 MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogMessageEntryProcessor processor = new LokiLogMessageEntryProcessor(client);
+                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
 
-                LokiLogMessageEntry message = new LokiLogMessageEntry(default, default, nameof(LokiLogMessageEntry.Message));
+                LokiLogEntry message = new LokiLogEntry(default, default, nameof(LokiLogEntry.Message));
 
                 // Act
                 processor.EnqueueMessage(message);
@@ -75,10 +75,10 @@ namespace LokiLoggingProvider.UnitTests.Logger
             {
                 // Arrange
                 MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogMessageEntryProcessor processor = new LokiLogMessageEntryProcessor(client);
+                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
                 processor.MessageQueue.CompleteAdding();
 
-                LokiLogMessageEntry message = new LokiLogMessageEntry(default, default, nameof(LokiLogMessageEntry.Message));
+                LokiLogEntry message = new LokiLogEntry(default, default, nameof(LokiLogEntry.Message));
 
                 // Act
                 processor.EnqueueMessage(message);
@@ -99,35 +99,35 @@ namespace LokiLoggingProvider.UnitTests.Logger
             {
                 // Arrange
                 MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogMessageEntryProcessor processor = new LokiLogMessageEntryProcessor(client);
+                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
                 processor.Dispose();
 
-                LokiLogMessageEntry message = new LokiLogMessageEntry(default, default, nameof(LokiLogMessageEntry.Message));
+                LokiLogEntry message = new LokiLogEntry(default, default, nameof(LokiLogEntry.Message));
 
                 // Act
                 Exception result = Record.Exception(() => processor.EnqueueMessage(message));
 
                 // Assert
                 ObjectDisposedException objectDisposedException = Assert.IsType<ObjectDisposedException>(result);
-                Assert.Equal(nameof(LokiLogMessageEntryProcessor), objectDisposedException.ObjectName);
+                Assert.Equal(nameof(LokiLogEntryProcessor), objectDisposedException.ObjectName);
             }
         }
 
         private sealed class MockLokiPushClient : ILokiPushClient
         {
-            private readonly IList<LokiLogMessageEntry> receivedLogMessageEntries = new List<LokiLogMessageEntry>();
+            private readonly IList<LokiLogEntry> receivedLogMessageEntries = new List<LokiLogEntry>();
 
             public void Dispose()
             {
                 this.receivedLogMessageEntries.Clear();
             }
 
-            public void Push(LokiLogMessageEntry entry)
+            public void Push(LokiLogEntry entry)
             {
                 this.receivedLogMessageEntries.Add(entry);
             }
 
-            public IEnumerable<LokiLogMessageEntry> GetReceivedLogMessageEntries()
+            public IEnumerable<LokiLogEntry> GetReceivedLogMessageEntries()
             {
                 return this.receivedLogMessageEntries;
             }

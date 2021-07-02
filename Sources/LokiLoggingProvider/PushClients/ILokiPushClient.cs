@@ -5,6 +5,6 @@ namespace LokiLoggingProvider.PushClients
 
     internal interface ILokiPushClient : IDisposable
     {
-        void Push(LokiLogMessageEntry entry);
+        void Push(LokiLogEntry entry);
     }
 }

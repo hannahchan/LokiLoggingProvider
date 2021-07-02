@@ -6,7 +6,7 @@ namespace LokiLoggingProvider.UnitTests.PushClients
     using LokiLoggingProvider.PushClients;
     using Xunit;
 
-    public class LokiGrpcPushClientUnitTests
+    public class GrpcPushClientUnitTests
     {
         public class Dispose
         {
@@ -14,7 +14,7 @@ namespace LokiLoggingProvider.UnitTests.PushClients
             public void When_DisposingMoreThanOnce_Expect_NoExceptions()
             {
                 // Arrange
-                LokiGrpcPushClient pushClient = new LokiGrpcPushClient(GrpcChannel.ForAddress("http://localhost:9095"));
+                GrpcPushClient pushClient = new GrpcPushClient(GrpcChannel.ForAddress("http://localhost:9095"));
 
                 // Act
                 Exception result = Record.Exception(() =>
@@ -34,17 +34,17 @@ namespace LokiLoggingProvider.UnitTests.PushClients
             public void When_PushingLogMessageEntryWithDisposedPushClient_Expect_ObjectDisposedException()
             {
                 // Arrange
-                LokiGrpcPushClient pushClient = new LokiGrpcPushClient(GrpcChannel.ForAddress("http://localhost:9095"));
+                GrpcPushClient pushClient = new GrpcPushClient(GrpcChannel.ForAddress("http://localhost:9095"));
                 pushClient.Dispose();
 
-                LokiLogMessageEntry entry = new LokiLogMessageEntry(default, default, default);
+                LokiLogEntry entry = new LokiLogEntry(default, default, default);
 
                 // Act
                 Exception result = Record.Exception(() => pushClient.Push(entry));
 
                 // Assert
                 ObjectDisposedException objectDisposedException = Assert.IsType<ObjectDisposedException>(result);
-                Assert.Equal(nameof(LokiGrpcPushClient), objectDisposedException.ObjectName);
+                Assert.Equal(nameof(GrpcPushClient), objectDisposedException.ObjectName);
             }
         }
     }

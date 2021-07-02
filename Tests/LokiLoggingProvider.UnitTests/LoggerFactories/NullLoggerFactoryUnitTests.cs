@@ -6,7 +6,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
     using Microsoft.Extensions.Logging.Abstractions;
     using Xunit;
 
-    public class LokiNullLoggerFactoryUnitTests
+    public class NullLoggerFactoryUnitTests
     {
         public class CreateLogger
         {
@@ -14,7 +14,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             public void When_CreatingLogger_Expect_LoggerCreated()
             {
                 // Arrange
-                ILokiLoggerFactory loggerFactory = new LokiNullLoggerFactory();
+                ILokiLoggerFactory loggerFactory = new LokiLoggingProvider.LoggerFactories.NullLoggerFactory();
                 string categoryName = nameof(categoryName);
 
                 // Act
@@ -28,7 +28,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             public void When_CreatingLoggerWithDisposedLoggerFactory_NoExceptions()
             {
                 // Arrange
-                ILokiLoggerFactory loggerFactory = new LokiNullLoggerFactory();
+                ILokiLoggerFactory loggerFactory = new LokiLoggingProvider.LoggerFactories.NullLoggerFactory();
                 loggerFactory.Dispose();
 
                 string categoryName = nameof(categoryName);
@@ -47,7 +47,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             public void When_DisposingMoreThanOnce_Expect_NoExceptions()
             {
                 // Arrange
-                ILokiLoggerFactory loggerFactory = new LokiNullLoggerFactory();
+                ILokiLoggerFactory loggerFactory = new LokiLoggingProvider.LoggerFactories.NullLoggerFactory();
 
                 // Act
                 Exception result = Record.Exception(() =>

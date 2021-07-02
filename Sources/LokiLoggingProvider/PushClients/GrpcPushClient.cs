@@ -4,10 +4,9 @@ namespace LokiLoggingProvider.PushClients
     using Google.Protobuf.WellKnownTypes;
     using Grpc.Net.Client;
     using Logproto;
-    using LokiLoggingProvider.Labels;
     using LokiLoggingProvider.Logger;
 
-    internal sealed class LokiGrpcPushClient : ILokiPushClient
+    internal sealed class GrpcPushClient : ILokiPushClient
     {
         private readonly GrpcChannel channel;
 
@@ -15,7 +14,7 @@ namespace LokiLoggingProvider.PushClients
 
         private bool disposed;
 
-        public LokiGrpcPushClient(GrpcChannel channel)
+        public GrpcPushClient(GrpcChannel channel)
         {
             this.channel = channel;
             this.client = new Pusher.PusherClient(this.channel);
@@ -32,11 +31,11 @@ namespace LokiLoggingProvider.PushClients
             this.disposed = true;
         }
 
-        public void Push(LokiLogMessageEntry entry)
+        public void Push(LokiLogEntry entry)
         {
             if (this.disposed)
             {
-                throw new ObjectDisposedException(nameof(LokiGrpcPushClient));
+                throw new ObjectDisposedException(nameof(GrpcPushClient));
             }
 
             StreamAdapter stream = new StreamAdapter

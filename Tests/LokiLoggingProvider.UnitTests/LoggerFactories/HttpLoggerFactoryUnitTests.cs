@@ -7,7 +7,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
     using Microsoft.Extensions.Logging;
     using Xunit;
 
-    public class LokiHttpLoggerFactoryUnitTests
+    public class HttpLoggerFactoryUnitTests
     {
         public class CreateLogger
         {
@@ -16,11 +16,11 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             {
                 // Arrange
                 LokiLoggerOptions options = new LokiLoggerOptions();
-                ILokiLoggerFactory loggerFactory = new LokiHttpLoggerFactory(
+                ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
                     options.HttpOptions,
                     options.StaticLabelOptions,
                     options.DynamicLabelOptions,
-                    options.FormatterOptions);
+                    options.Formatter);
 
                 string categoryName = nameof(categoryName);
 
@@ -36,11 +36,11 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             {
                 // Arrange
                 LokiLoggerOptions options = new LokiLoggerOptions();
-                ILokiLoggerFactory loggerFactory = new LokiHttpLoggerFactory(
+                ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
                     options.HttpOptions,
                     options.StaticLabelOptions,
                     options.DynamicLabelOptions,
-                    options.FormatterOptions);
+                    options.Formatter);
 
                 loggerFactory.Dispose();
 
@@ -51,7 +51,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
 
                 // Assert
                 ObjectDisposedException objectDisposedException = Assert.IsType<ObjectDisposedException>(result);
-                Assert.Equal(nameof(LokiHttpLoggerFactory), objectDisposedException.ObjectName);
+                Assert.Equal(nameof(HttpLoggerFactory), objectDisposedException.ObjectName);
             }
         }
 
@@ -62,11 +62,11 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             {
                 // Arrange
                 LokiLoggerOptions options = new LokiLoggerOptions();
-                ILokiLoggerFactory loggerFactory = new LokiHttpLoggerFactory(
+                ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
                     options.HttpOptions,
                     options.StaticLabelOptions,
                     options.DynamicLabelOptions,
-                    options.FormatterOptions);
+                    options.Formatter);
 
                 // Act
                 Exception result = Record.Exception(() =>

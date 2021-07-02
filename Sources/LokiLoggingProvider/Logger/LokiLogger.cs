@@ -2,35 +2,36 @@ namespace LokiLoggingProvider.Logger
 {
     using System;
     using System.Collections.Generic;
-    using LokiLoggingProvider.Labels;
+    using LokiLoggingProvider.Formatters;
     using LokiLoggingProvider.Options;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Logging.Abstractions;
 
     internal class LokiLogger : ILogger
     {
         private readonly string categoryName;
 
-        private readonly LokiLogMessageEntryProcessor processor;
+        private readonly ILogEntryFormatter formatter;
+
+        private readonly LokiLogEntryProcessor processor;
 
         private readonly IReadOnlyDictionary<string, string> staticLabels;
 
         private readonly DynamicLabelOptions dynamicLabelOptions;
 
-        private readonly FormatterOptions formatterOptions;
-
-        internal LokiLogger(
+        public LokiLogger(
             string categoryName,
-            LokiLogMessageEntryProcessor processor,
+            ILogEntryFormatter formatter,
+            LokiLogEntryProcessor processor,
             StaticLabelOptions staticLabelOptions,
-            DynamicLabelOptions dynamicLabelOptions,
-            FormatterOptions formatterOptions)
+            DynamicLabelOptions dynamicLabelOptions)
         {
             this.categoryName = categoryName;
+            this.formatter = formatter;
             this.processor = processor;
 
             this.staticLabels = staticLabelOptions.ToReadOnlyDictionary();
             this.dynamicLabelOptions = dynamicLabelOptions;
-            this.formatterOptions = formatterOptions;
         }
 
         public IDisposable? BeginScope<TState>(TState state)
@@ -50,6 +51,8 @@ namespace LokiLoggingProvider.Logger
                 return;
             }
 
+            DateTime timestamp = DateTime.UtcNow;
+
             IReadOnlyDictionary<string, string> labels = this.staticLabels.AddDynamicLables(
                 this.dynamicLabelOptions,
                 this.categoryName,
@@ -57,10 +60,9 @@ namespace LokiLoggingProvider.Logger
                 eventId,
                 exception);
 
-            this.processor.EnqueueMessage(new LokiLogMessageEntry(
-                timestamp: DateTime.UtcNow,
-                labels: labels,
-                message: formatter(state, exception)));
+            LogEntry<TState> logEntry = new LogEntry<TState>(logLevel, this.categoryName, eventId, state, exception, formatter);
+
+            this.processor.EnqueueMessage(new LokiLogEntry(timestamp, labels, this.formatter.Format(logEntry)));
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace LokiLoggingProvider.Labels
+namespace LokiLoggingProvider.Logger
 {
     using System;
     using System.Collections.Generic;
@@ -56,9 +56,9 @@ namespace LokiLoggingProvider.Labels
         {
             Dictionary<string, string> labels = new Dictionary<string, string>(staticLabels);
 
-            if (options.IncludeCategoryName)
+            if (options.IncludeCategory)
             {
-                labels.Add(Labels.CategoryName, categoryName);
+                labels.Add(Labels.Category, categoryName);
             }
 
             if (options.IncludeLogLevel)

@@ -23,6 +23,8 @@ namespace Example.WebApp
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseMiddleware<RequestLoggingMiddleware>();
+
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>

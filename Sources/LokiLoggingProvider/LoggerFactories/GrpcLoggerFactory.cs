@@ -2,58 +2,56 @@ namespace LokiLoggingProvider.LoggerFactories
 {
     using System;
     using System.Collections.Concurrent;
-    using System.Net.Http;
+    using Grpc.Net.Client;
+    using LokiLoggingProvider.Formatters;
     using LokiLoggingProvider.Logger;
     using LokiLoggingProvider.Options;
     using LokiLoggingProvider.PushClients;
     using Microsoft.Extensions.Logging;
 
-    internal sealed class LokiHttpLoggerFactory : ILokiLoggerFactory
+    internal sealed class GrpcLoggerFactory : ILokiLoggerFactory
     {
         private readonly ConcurrentDictionary<string, LokiLogger> loggers = new ConcurrentDictionary<string, LokiLogger>();
 
-        private readonly LokiLogMessageEntryProcessor processor;
+        private readonly ILogEntryFormatter formatter;
+
+        private readonly LokiLogEntryProcessor processor;
 
         private readonly StaticLabelOptions staticLabelOptions;
 
         private readonly DynamicLabelOptions dynamicLabelOptions;
 
-        private readonly FormatterOptions formatterOptions;
-
         private bool disposed;
 
-        public LokiHttpLoggerFactory(
-            HttpOptions httpOptions,
+        public GrpcLoggerFactory(
+            GrpcOptions grpcOptions,
             StaticLabelOptions staticLabelOptions,
             DynamicLabelOptions dynamicLabelOptions,
-            FormatterOptions formatterOptions)
+            Formatter formatter)
         {
-            HttpClient httpClient = new HttpClient
-            {
-                BaseAddress = new Uri(httpOptions.Address),
-            };
-
-            LokiHttpPushClient pushClient = new LokiHttpPushClient(httpClient);
-            this.processor = new LokiLogMessageEntryProcessor(pushClient);
+            GrpcChannel channel = GrpcChannel.ForAddress(grpcOptions.Address);
+            GrpcPushClient grpcClient = new GrpcPushClient(channel);
+            this.processor = new LokiLogEntryProcessor(grpcClient);
 
             this.staticLabelOptions = staticLabelOptions;
             this.dynamicLabelOptions = dynamicLabelOptions;
-            this.formatterOptions = formatterOptions;
+
+            this.formatter = formatter.CreateFormatter();
         }
 
         public ILogger CreateLogger(string categoryName)
         {
             if (this.disposed)
             {
-                throw new ObjectDisposedException(nameof(LokiHttpLoggerFactory));
+                throw new ObjectDisposedException(nameof(GrpcLoggerFactory));
             }
 
             return this.loggers.GetOrAdd(categoryName, name => new LokiLogger(
                 name,
+                this.formatter,
                 this.processor,
                 this.staticLabelOptions,
-                this.dynamicLabelOptions,
-                this.formatterOptions));
+                this.dynamicLabelOptions));
         }
 
         public void Dispose()

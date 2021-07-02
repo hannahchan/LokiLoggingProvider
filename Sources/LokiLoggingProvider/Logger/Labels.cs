@@ -1,4 +1,4 @@
-namespace LokiLoggingProvider.Labels
+namespace LokiLoggingProvider.Logger
 {
     internal static class Labels
     {
@@ -6,7 +6,7 @@ namespace LokiLoggingProvider.Labels
 
         public const string Instance = "instance";
 
-        public const string CategoryName = "categoryName";
+        public const string Category = "category";
 
         public const string LogLevel = "logLevel";
 
@@ -14,6 +14,6 @@ namespace LokiLoggingProvider.Labels
 
         public const string Exception = "exception";
 
-        public static readonly string[] All = { Job, Instance, CategoryName, LogLevel, EventId, Exception };
+        public static readonly string[] All = { Job, Instance, Category, LogLevel, EventId, Exception };
     }
 }

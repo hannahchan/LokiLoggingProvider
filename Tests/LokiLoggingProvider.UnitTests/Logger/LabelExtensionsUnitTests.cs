@@ -1,9 +1,9 @@
-namespace LokiLoggingProvider.UnitTests.Labels
+namespace LokiLoggingProvider.UnitTests.Logger
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using LokiLoggingProvider.Labels;
+    using LokiLoggingProvider.Logger;
     using LokiLoggingProvider.Options;
     using Microsoft.Extensions.Logging;
     using Xunit;
@@ -28,7 +28,7 @@ namespace LokiLoggingProvider.UnitTests.Labels
             [Theory]
             [InlineData(Labels.Job)]
             [InlineData(Labels.Instance)]
-            [InlineData(Labels.CategoryName)]
+            [InlineData(Labels.Category)]
             [InlineData(Labels.LogLevel)]
             [InlineData(Labels.EventId)]
             [InlineData(Labels.Exception)]
@@ -227,7 +227,7 @@ namespace LokiLoggingProvider.UnitTests.Labels
 
                 DynamicLabelOptions options = new DynamicLabelOptions
                 {
-                    IncludeCategoryName = true,
+                    IncludeCategory = true,
                     IncludeLogLevel = true,
                     IncludeEventId = true,
                     IncludeException = true,
@@ -241,7 +241,7 @@ namespace LokiLoggingProvider.UnitTests.Labels
                     result,
                     label =>
                     {
-                        Assert.Equal(Labels.CategoryName, label.Key);
+                        Assert.Equal(Labels.Category, label.Key);
                         Assert.Equal(this.categoryName, label.Value);
                     },
                     label =>
@@ -269,7 +269,7 @@ namespace LokiLoggingProvider.UnitTests.Labels
 
                 DynamicLabelOptions options = new DynamicLabelOptions
                 {
-                    IncludeCategoryName = false,
+                    IncludeCategory = false,
                     IncludeLogLevel = false,
                     IncludeEventId = false,
                     IncludeException = false,

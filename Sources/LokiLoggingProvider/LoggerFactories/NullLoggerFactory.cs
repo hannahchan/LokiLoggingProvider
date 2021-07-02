@@ -3,7 +3,7 @@ namespace LokiLoggingProvider.LoggerFactories
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
 
-    internal sealed class LokiNullLoggerFactory : ILokiLoggerFactory
+    internal sealed class NullLoggerFactory : ILokiLoggerFactory
     {
         public ILogger CreateLogger(string categoryName)
         {

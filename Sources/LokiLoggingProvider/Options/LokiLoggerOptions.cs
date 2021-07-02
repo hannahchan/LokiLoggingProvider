@@ -17,6 +17,7 @@ namespace LokiLoggingProvider.Options
         /// <summary>Configures and adds dynamic labels. Use with caution.</summary>
         public DynamicLabelOptions DynamicLabelOptions { get; set; } = new DynamicLabelOptions();
 
-        public FormatterOptions FormatterOptions { get; set; } = new FormatterOptions();
+        /// <summary>The formatter to use. Valid values are 'Simple', 'Json' or 'Logfmt'. Defaults to 'Simple'.</summary>
+        public Formatter Formatter { get; set; } = Formatter.Simple;
     }
 }

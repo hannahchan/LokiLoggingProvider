@@ -54,22 +54,22 @@ namespace LokiLoggingProvider
             switch (options.Client)
             {
                 case PushClient.Grpc:
-                    return new LokiGrpcLoggerFactory(
+                    return new GrpcLoggerFactory(
                         options.GrpcOptions,
                         options.StaticLabelOptions,
                         options.DynamicLabelOptions,
-                        options.FormatterOptions);
+                        options.Formatter);
 
                 case PushClient.Http:
-                    return new LokiHttpLoggerFactory(
+                    return new HttpLoggerFactory(
                         options.HttpOptions,
                         options.StaticLabelOptions,
                         options.DynamicLabelOptions,
-                        options.FormatterOptions);
+                        options.Formatter);
 
                 case PushClient.None:
                 default:
-                    return new LokiNullLoggerFactory();
+                    return new NullLoggerFactory();
             }
         }
     }

@@ -5,7 +5,7 @@ namespace LokiLoggingProvider.Logger
     using System.Threading;
     using LokiLoggingProvider.PushClients;
 
-    internal sealed class LokiLogMessageEntryProcessor : IDisposable
+    internal sealed class LokiLogEntryProcessor : IDisposable
     {
         private const int MaxQueuedMessages = 1024;
 
@@ -15,21 +15,21 @@ namespace LokiLoggingProvider.Logger
 
         private bool disposed;
 
-        public LokiLogMessageEntryProcessor(ILokiPushClient client)
+        public LokiLogEntryProcessor(ILokiPushClient client)
         {
             this.client = client;
 
             this.backgroundThread = new Thread(this.ProcessLogQueue)
             {
                 IsBackground = true,
-                Name = nameof(LokiLogMessageEntryProcessor),
+                Name = nameof(LokiLogEntryProcessor),
             };
 
             this.backgroundThread.Start();
         }
 
         // Internal for testing
-        internal BlockingCollection<LokiLogMessageEntry> MessageQueue { get; } = new BlockingCollection<LokiLogMessageEntry>(MaxQueuedMessages);
+        internal BlockingCollection<LokiLogEntry> MessageQueue { get; } = new BlockingCollection<LokiLogEntry>(MaxQueuedMessages);
 
         public void Dispose()
         {
@@ -53,11 +53,11 @@ namespace LokiLoggingProvider.Logger
             this.disposed = true;
         }
 
-        public void EnqueueMessage(LokiLogMessageEntry message)
+        public void EnqueueMessage(LokiLogEntry message)
         {
             if (this.disposed)
             {
-                throw new ObjectDisposedException(nameof(LokiLogMessageEntryProcessor));
+                throw new ObjectDisposedException(nameof(LokiLogEntryProcessor));
             }
 
             if (this.MessageQueue.IsAddingCompleted)
@@ -79,7 +79,7 @@ namespace LokiLoggingProvider.Logger
         {
             try
             {
-                foreach (LokiLogMessageEntry entry in this.MessageQueue.GetConsumingEnumerable())
+                foreach (LokiLogEntry entry in this.MessageQueue.GetConsumingEnumerable())
                 {
                     this.PushMessage(entry);
                 }
@@ -97,7 +97,7 @@ namespace LokiLoggingProvider.Logger
             }
         }
 
-        private void PushMessage(LokiLogMessageEntry entry)
+        private void PushMessage(LokiLogEntry entry)
         {
             try
             {

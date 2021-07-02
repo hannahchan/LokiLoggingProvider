@@ -3,7 +3,7 @@ namespace LokiLoggingProvider.Logger
     using System;
     using System.Collections.Generic;
 
-    internal struct LokiLogMessageEntry
+    internal struct LokiLogEntry
     {
         public readonly DateTime Timestamp;
 
@@ -11,7 +11,7 @@ namespace LokiLoggingProvider.Logger
 
         public readonly string Message;
 
-        public LokiLogMessageEntry(DateTime timestamp, IReadOnlyDictionary<string, string> labels, string message)
+        public LokiLogEntry(DateTime timestamp, IReadOnlyDictionary<string, string> labels, string message)
         {
             this.Timestamp = timestamp;
             this.Labels = labels;
