@@ -12,7 +12,7 @@ namespace LokiLoggingProvider.Formatters
                 case Formatter.Json:
                     throw new NotImplementedException();
                 case Formatter.Logfmt:
-                    throw new NotImplementedException();
+                    return new LogfmtFormatter();
                 case Formatter.Simple:
                 default:
                     return new SimpleFormatter();

@@ -7,11 +7,11 @@ namespace LokiLoggingProvider.Formatters
     {
         public string Format<TState>(LogEntry<TState> logEntry)
         {
-            string message = logEntry.Formatter(logEntry.State, logEntry.Exception);
+            string message = $"[{logEntry.LogLevel}] {logEntry.Formatter(logEntry.State, logEntry.Exception)}";
 
             if (logEntry.Exception != null)
             {
-                message = message + Environment.NewLine + logEntry.Exception.ToString();
+                message += Environment.NewLine + logEntry.Exception.ToString();
             }
 
             return message;
