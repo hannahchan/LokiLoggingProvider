@@ -14,5 +14,10 @@ namespace LokiLoggingProvider.LoggerFactories
         {
             // Do nothing
         }
+
+        public void SetScopeProvider(IExternalScopeProvider scopeProvider)
+        {
+            // Do nothing
+        }
     }
 }

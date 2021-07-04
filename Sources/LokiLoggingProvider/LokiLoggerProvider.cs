@@ -7,7 +7,7 @@ namespace LokiLoggingProvider
     using Microsoft.Extensions.Options;
 
     [ProviderAlias("Loki")]
-    public sealed class LokiLoggerProvider : ILoggerProvider
+    public sealed class LokiLoggerProvider : ILoggerProvider, ISupportExternalScope
     {
         private readonly IDisposable onChangeToken;
 
@@ -47,6 +47,11 @@ namespace LokiLoggingProvider
             this.loggerFactory.Dispose();
 
             this.disposed = true;
+        }
+
+        public void SetScopeProvider(IExternalScopeProvider scopeProvider)
+        {
+            this.loggerFactory.SetScopeProvider(scopeProvider);
         }
 
         private static ILokiLoggerFactory CreateLoggerFactory(LokiLoggerOptions options)

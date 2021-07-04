@@ -6,5 +6,7 @@ namespace LokiLoggingProvider.LoggerFactories
     internal interface ILokiLoggerFactory : IDisposable
     {
         ILogger CreateLogger(string categoryName);
+
+        void SetScopeProvider(IExternalScopeProvider scopeProvider);
     }
 }

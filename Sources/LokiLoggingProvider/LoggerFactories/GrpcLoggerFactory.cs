@@ -2,6 +2,7 @@ namespace LokiLoggingProvider.LoggerFactories
 {
     using System;
     using System.Collections.Concurrent;
+    using System.Collections.Generic;
     using Grpc.Net.Client;
     using LokiLoggingProvider.Formatters;
     using LokiLoggingProvider.Logger;
@@ -20,6 +21,8 @@ namespace LokiLoggingProvider.LoggerFactories
         private readonly StaticLabelOptions staticLabelOptions;
 
         private readonly DynamicLabelOptions dynamicLabelOptions;
+
+        private IExternalScopeProvider scopeProvider = NullExternalScopeProvider.Instance;
 
         private bool disposed;
 
@@ -51,7 +54,10 @@ namespace LokiLoggingProvider.LoggerFactories
                 this.formatter,
                 this.processor,
                 this.staticLabelOptions,
-                this.dynamicLabelOptions));
+                this.dynamicLabelOptions)
+            {
+                ScopeProvider = this.scopeProvider,
+            });
         }
 
         public void Dispose()
@@ -63,6 +69,16 @@ namespace LokiLoggingProvider.LoggerFactories
 
             this.processor.Dispose();
             this.disposed = true;
+        }
+
+        public void SetScopeProvider(IExternalScopeProvider scopeProvider)
+        {
+            this.scopeProvider = scopeProvider;
+
+            foreach (KeyValuePair<string, LokiLogger> logger in this.loggers)
+            {
+                logger.Value.ScopeProvider = this.scopeProvider;
+            }
         }
     }
 }

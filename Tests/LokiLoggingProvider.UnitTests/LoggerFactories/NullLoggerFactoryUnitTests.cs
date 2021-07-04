@@ -1,6 +1,7 @@
 namespace LokiLoggingProvider.UnitTests.LoggerFactories
 {
     using System;
+    using LokiLoggingProvider.Logger;
     using LokiLoggingProvider.LoggerFactories;
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
@@ -57,6 +58,22 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
                 });
 
                 // Assert
+                Assert.Null(result);
+            }
+        }
+
+        public class SetScopeProvider
+        {
+            [Fact]
+            public void When_SettingScopeProvider_Expect_NoExceptions()
+            {
+                // Arrange
+                ILokiLoggerFactory loggerFactory = new LokiLoggingProvider.LoggerFactories.NullLoggerFactory();
+
+                // Act
+                Exception result = Record.Exception(() => loggerFactory.SetScopeProvider(NullExternalScopeProvider.Instance));
+
+                // Arrange
                 Assert.Null(result);
             }
         }

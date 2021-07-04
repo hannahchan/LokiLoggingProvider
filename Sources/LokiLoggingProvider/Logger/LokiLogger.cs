@@ -34,9 +34,11 @@ namespace LokiLoggingProvider.Logger
             this.dynamicLabelOptions = dynamicLabelOptions;
         }
 
-        public IDisposable? BeginScope<TState>(TState state)
+        internal IExternalScopeProvider ScopeProvider { get; set; } = NullExternalScopeProvider.Instance;
+
+        public IDisposable BeginScope<TState>(TState state)
         {
-            return default;
+            return this.ScopeProvider.Push(state);
         }
 
         public bool IsEnabled(LogLevel logLevel)

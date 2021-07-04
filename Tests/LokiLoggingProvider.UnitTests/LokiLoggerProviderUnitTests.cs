@@ -71,6 +71,28 @@ namespace LokiLoggingProvider.UnitTests
             }
         }
 
+        public class SetScopeProvider
+        {
+            [Theory]
+            [InlineData(PushClient.Grpc)]
+            [InlineData(PushClient.Http)]
+            public void When_SettingScopeProvider_Expect_ScopeProviderSet(PushClient client)
+            {
+                // Arrange
+                MockOptionsMonitor options = new MockOptionsMonitor(new LokiLoggerOptions { Client = client });
+                ILoggerProvider loggerProvider = new LokiLoggerProvider(options);
+
+                string categoryName = nameof(categoryName);
+
+                // Act
+                ((ISupportExternalScope)loggerProvider).SetScopeProvider(NullExternalScopeProvider.Instance);
+
+                // Assert
+                LokiLogger logger = Assert.IsType<LokiLogger>(loggerProvider.CreateLogger(categoryName));
+                Assert.IsType<NullExternalScopeProvider>(logger.ScopeProvider);
+            }
+        }
+
         public class UpdatingOptions
         {
             [Fact]
@@ -94,6 +116,14 @@ namespace LokiLoggingProvider.UnitTests
                 Assert.NotSame(firstLogger, secondLogger);
                 Assert.IsType<NullLogger>(firstLogger);
                 Assert.IsType<LokiLogger>(secondLogger);
+            }
+        }
+
+        private sealed class MockDisposable : IDisposable
+        {
+            public void Dispose()
+            {
+                // Mock Disposable
             }
         }
 
@@ -123,14 +153,6 @@ namespace LokiLoggingProvider.UnitTests
             {
                 this.CurrentValue = value;
                 this.listener.Invoke(value, null);
-            }
-        }
-
-        private sealed class MockDisposable : IDisposable
-        {
-            public void Dispose()
-            {
-                // Mock Disposable
             }
         }
     }
