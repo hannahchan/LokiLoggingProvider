@@ -7,16 +7,12 @@ namespace LokiLoggingProvider.Formatters
     {
         public static ILogEntryFormatter CreateFormatter(this Formatter formatter)
         {
-            switch (formatter)
+            return formatter switch
             {
-                case Formatter.Json:
-                    throw new NotImplementedException();
-                case Formatter.Logfmt:
-                    return new LogfmtFormatter();
-                case Formatter.Simple:
-                default:
-                    return new SimpleFormatter();
-            }
+                Formatter.Json => throw new NotImplementedException(),
+                Formatter.Logfmt => new LogfmtFormatter(),
+                _ => new SimpleFormatter(),
+            };
         }
     }
 }

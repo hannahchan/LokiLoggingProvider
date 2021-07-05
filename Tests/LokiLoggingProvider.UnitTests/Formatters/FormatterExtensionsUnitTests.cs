@@ -33,6 +33,19 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 // Assert
                 Assert.IsType<LogfmtFormatter>(result);
             }
+
+            [Fact]
+            public void When_CreatingInvalidFormatter_Expect_SimpleFormatter()
+            {
+                // Arrange
+                Formatter formatter = (Formatter)100; // Invalid Formatter
+
+                // Act
+                ILogEntryFormatter result = formatter.CreateFormatter();
+
+                // Assert
+                Assert.IsType<SimpleFormatter>(result);
+            }
         }
     }
 }

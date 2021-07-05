@@ -56,26 +56,22 @@ namespace LokiLoggingProvider
 
         private static ILokiLoggerFactory CreateLoggerFactory(LokiLoggerOptions options)
         {
-            switch (options.Client)
+            return options.Client switch
             {
-                case PushClient.Grpc:
-                    return new GrpcLoggerFactory(
-                        options.GrpcOptions,
-                        options.StaticLabelOptions,
-                        options.DynamicLabelOptions,
-                        options.Formatter);
+                PushClient.Grpc => new GrpcLoggerFactory(
+                    options.GrpcOptions,
+                    options.StaticLabelOptions,
+                    options.DynamicLabelOptions,
+                    options.Formatter),
 
-                case PushClient.Http:
-                    return new HttpLoggerFactory(
-                        options.HttpOptions,
-                        options.StaticLabelOptions,
-                        options.DynamicLabelOptions,
-                        options.Formatter);
+                PushClient.Http => new HttpLoggerFactory(
+                    options.HttpOptions,
+                    options.StaticLabelOptions,
+                    options.DynamicLabelOptions,
+                    options.Formatter),
 
-                case PushClient.None:
-                default:
-                    return new NullLoggerFactory();
-            }
+                _ => new NullLoggerFactory(),
+            };
         }
     }
 }

@@ -16,6 +16,7 @@ namespace LokiLoggingProvider.UnitTests
             [InlineData(PushClient.None, typeof(NullLogger))]
             [InlineData(PushClient.Grpc, typeof(LokiLogger))]
             [InlineData(PushClient.Http, typeof(LokiLogger))]
+            [InlineData((PushClient)100, typeof(NullLogger))] // Invalid Push Client
             public void When_CreatingLogger_Expect_LoggerCreated(PushClient client, Type expectedType)
             {
                 // Arrange
