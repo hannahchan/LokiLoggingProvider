@@ -30,7 +30,7 @@ namespace LokiLoggingProvider.LoggerFactories
             GrpcOptions grpcOptions,
             StaticLabelOptions staticLabelOptions,
             DynamicLabelOptions dynamicLabelOptions,
-            Formatter formatter)
+            ILogEntryFormatter formatter)
         {
             GrpcChannel channel = GrpcChannel.ForAddress(grpcOptions.Address);
             GrpcPushClient grpcClient = new GrpcPushClient(channel);
@@ -39,7 +39,7 @@ namespace LokiLoggingProvider.LoggerFactories
             this.staticLabelOptions = staticLabelOptions;
             this.dynamicLabelOptions = dynamicLabelOptions;
 
-            this.formatter = formatter.CreateFormatter();
+            this.formatter = formatter;
         }
 
         public ILogger CreateLogger(string categoryName)

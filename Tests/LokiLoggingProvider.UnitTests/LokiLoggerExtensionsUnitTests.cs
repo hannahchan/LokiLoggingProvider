@@ -99,7 +99,7 @@ namespace LokiLoggingProvider.UnitTests
             ILoggingBuilder builder = new MockLoggingBuilder();
 
             // Act
-            builder.AddLoki(configure => configure.StaticLabelOptions.JobName = nameof(LokiLoggerExtensionsUnitTests));
+            builder.AddLoki(configure => configure.StaticLabels.JobName = nameof(LokiLoggerExtensionsUnitTests));
 
             // Assert
             IServiceProvider serviceProvider = builder.Services.BuildServiceProvider();
@@ -112,9 +112,9 @@ namespace LokiLoggingProvider.UnitTests
             Assert.NotNull(optionsSnapshot);
             Assert.NotNull(optionsMonitor);
 
-            Assert.Equal(nameof(LokiLoggerExtensionsUnitTests), options.Value.StaticLabelOptions.JobName);
-            Assert.Equal(nameof(LokiLoggerExtensionsUnitTests), optionsSnapshot.Value.StaticLabelOptions.JobName);
-            Assert.Equal(nameof(LokiLoggerExtensionsUnitTests), optionsMonitor.CurrentValue.StaticLabelOptions.JobName);
+            Assert.Equal(nameof(LokiLoggerExtensionsUnitTests), options.Value.StaticLabels.JobName);
+            Assert.Equal(nameof(LokiLoggerExtensionsUnitTests), optionsSnapshot.Value.StaticLabels.JobName);
+            Assert.Equal(nameof(LokiLoggerExtensionsUnitTests), optionsMonitor.CurrentValue.StaticLabels.JobName);
 
             Assert.IsType<LokiLoggerProvider>(serviceProvider.GetService<ILoggerProvider>());
 

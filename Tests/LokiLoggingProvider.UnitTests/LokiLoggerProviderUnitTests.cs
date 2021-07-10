@@ -12,15 +12,11 @@ namespace LokiLoggingProvider.UnitTests
     {
         public class CreateLogger
         {
-            [Theory]
-            [InlineData(PushClient.None, typeof(NullLogger))]
-            [InlineData(PushClient.Grpc, typeof(LokiLogger))]
-            [InlineData(PushClient.Http, typeof(LokiLogger))]
-            [InlineData((PushClient)100, typeof(NullLogger))] // Invalid Push Client
-            public void When_CreatingLogger_Expect_LoggerCreated(PushClient client, Type expectedType)
+            [Fact]
+            public void When_CreatingLogger_Expect_LoggerCreated()
             {
                 // Arrange
-                MockOptionsMonitor options = new MockOptionsMonitor(new LokiLoggerOptions { Client = client });
+                MockOptionsMonitor options = new MockOptionsMonitor(new LokiLoggerOptions());
                 ILoggerProvider loggerProvider = new LokiLoggerProvider(options);
 
                 string categoryName = nameof(categoryName);
@@ -29,7 +25,7 @@ namespace LokiLoggingProvider.UnitTests
                 ILogger logger = loggerProvider.CreateLogger(categoryName);
 
                 // Assert
-                Assert.Equal(expectedType, logger.GetType());
+                Assert.IsType<NullLogger>(logger);
             }
 
             [Fact]

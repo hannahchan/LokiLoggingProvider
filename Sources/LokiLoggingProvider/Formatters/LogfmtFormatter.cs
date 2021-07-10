@@ -2,35 +2,63 @@ namespace LokiLoggingProvider.Formatters
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics;
     using System.Linq;
+    using LokiLoggingProvider.Extensions;
+    using LokiLoggingProvider.Options;
     using Microsoft.Extensions.Logging.Abstractions;
 
     internal class LogfmtFormatter : ILogEntryFormatter
     {
+        private readonly LogfmtFormatterOptions options;
+
+        public LogfmtFormatter(LogfmtFormatterOptions options)
+        {
+            this.options = options;
+        }
+
         public string Format<TState>(LogEntry<TState> logEntry)
         {
-            List<KeyValuePair<string, object?>> keyValuePairs = new List<KeyValuePair<string, object?>>
+            Dictionary<string, object?> keyValuePairs = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
             {
-                new KeyValuePair<string, object?>("logLevel", logEntry.LogLevel),
-                new KeyValuePair<string, object?>("category", logEntry.Category),
-                new KeyValuePair<string, object?>("eventId", logEntry.EventId),
-                new KeyValuePair<string, object?>("message", logEntry.Formatter(logEntry.State, logEntry.Exception)),
+                ["LogLevel"] = logEntry.LogLevel,
             };
+
+            if (this.options.IncludeCategory)
+            {
+                keyValuePairs["Category"] = logEntry.Category;
+            }
+
+            if (this.options.IncludeEventId)
+            {
+                keyValuePairs["EventId"] = logEntry.EventId;
+            }
+
+            keyValuePairs["Message"] = logEntry.Formatter(logEntry.State, logEntry.Exception);
+
+            if (logEntry.Exception != null)
+            {
+                keyValuePairs["Exception"] = logEntry.Exception.GetType();
+            }
 
             if (logEntry.State is IEnumerable<KeyValuePair<string, object?>> state)
             {
-                keyValuePairs.AddRange(state);
+                foreach (KeyValuePair<string, object?> keyValuePair in state)
+                {
+                    keyValuePairs.TryAdd(keyValuePair.Key, keyValuePair.Value);
+                }
             }
 
-            if (logEntry.Exception != null)
+            if (this.options.IncludeActivityTracking && Activity.Current is Activity activity)
             {
-                keyValuePairs.Add(new KeyValuePair<string, object?>("exception", logEntry.Exception.GetType()));
+                keyValuePairs.TryAdd("SpanId", activity.GetSpanId());
+                keyValuePairs.TryAdd("TraceId", activity.GetTraceId());
+                keyValuePairs.TryAdd("ParentId", activity.GetParentId());
             }
 
-            IEnumerable<string> logfmtKeyValuePairs = keyValuePairs.Select(keyValuePair => $"{keyValuePair.Key}={ToLogfmtValue(keyValuePair.Value)}");
-            string message = string.Join(" ", logfmtKeyValuePairs);
+            string message = string.Join(" ", keyValuePairs.Select(keyValuePair => $"{ToLogfmtKey(keyValuePair.Key)}={ToLogfmtValue(keyValuePair.Value)}"));
 
-            if (logEntry.Exception != null)
+            if (logEntry.Exception != null && this.options.PrintExceptions)
             {
                 message += Environment.NewLine + logEntry.Exception.ToString();
             }
@@ -38,21 +66,26 @@ namespace LokiLoggingProvider.Formatters
             return message;
         }
 
-        private static string ToLogfmtValue(object? @object)
+        private static string ToLogfmtKey(string key)
         {
-            string? @string = @object?.ToString();
+            return key.Replace(" ", string.Empty);
+        }
 
-            if (string.IsNullOrEmpty(@string))
+        private static string ToLogfmtValue(object? value)
+        {
+            string? stringValue = value?.ToString();
+
+            if (string.IsNullOrEmpty(stringValue))
             {
                 return "\"\"";
             }
 
-            if (@string.Contains(" "))
+            if (stringValue.Contains(" "))
             {
-                return $"\"{@string}\"";
+                return $"\"{stringValue}\"";
             }
 
-            return @string;
+            return stringValue;
         }
     }
 }

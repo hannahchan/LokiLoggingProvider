@@ -1,6 +1,7 @@
 namespace LokiLoggingProvider.UnitTests.LoggerFactories
 {
     using System;
+    using LokiLoggingProvider.Formatters;
     using LokiLoggingProvider.Logger;
     using LokiLoggingProvider.LoggerFactories;
     using LokiLoggingProvider.Options;
@@ -17,10 +18,10 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
                 // Arrange
                 LokiLoggerOptions options = new LokiLoggerOptions();
                 ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
-                    options.HttpOptions,
-                    options.StaticLabelOptions,
-                    options.DynamicLabelOptions,
-                    options.Formatter);
+                    options.Http,
+                    options.StaticLabels,
+                    options.DynamicLabels,
+                    new SimpleFormatter(new SimpleFormatterOptions()));
 
                 string categoryName = nameof(categoryName);
 
@@ -37,10 +38,10 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
                 // Arrange
                 LokiLoggerOptions options = new LokiLoggerOptions();
                 ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
-                    options.HttpOptions,
-                    options.StaticLabelOptions,
-                    options.DynamicLabelOptions,
-                    options.Formatter);
+                    options.Http,
+                    options.StaticLabels,
+                    options.DynamicLabels,
+                    new SimpleFormatter(new SimpleFormatterOptions()));
 
                 loggerFactory.Dispose();
 
@@ -63,10 +64,10 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
                 // Arrange
                 LokiLoggerOptions options = new LokiLoggerOptions();
                 ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
-                    options.HttpOptions,
-                    options.StaticLabelOptions,
-                    options.DynamicLabelOptions,
-                    options.Formatter);
+                    options.Http,
+                    options.StaticLabels,
+                    options.DynamicLabels,
+                    new SimpleFormatter(new SimpleFormatterOptions()));
 
                 // Act
                 Exception result = Record.Exception(() =>
@@ -88,10 +89,10 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
                 // Arrange
                 LokiLoggerOptions options = new LokiLoggerOptions();
                 ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
-                    options.HttpOptions,
-                    options.StaticLabelOptions,
-                    options.DynamicLabelOptions,
-                    options.Formatter);
+                    options.Http,
+                    options.StaticLabels,
+                    options.DynamicLabels,
+                    new SimpleFormatter(new SimpleFormatterOptions()));
 
                 string categoryName1 = nameof(categoryName1);
                 string categoryName2 = nameof(categoryName2);

@@ -20,7 +20,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 MockLokiPushClient client = new MockLokiPushClient();
 
                 string categoryName = nameof(categoryName);
-                ILogEntryFormatter formatter = new SimpleFormatter();
+                ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
                 LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
                 LokiLoggerOptions options = new LokiLoggerOptions();
                 MockScopeProvider scopeProvider = new MockScopeProvider();
@@ -29,8 +29,8 @@ namespace LokiLoggingProvider.UnitTests.Logger
                     categoryName,
                     formatter,
                     processor,
-                    options.StaticLabelOptions,
-                    options.DynamicLabelOptions)
+                    options.StaticLabels,
+                    options.DynamicLabels)
                 {
                     ScopeProvider = scopeProvider,
                 };
@@ -79,7 +79,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 MockLokiPushClient client = new MockLokiPushClient();
 
                 string categoryName = nameof(categoryName);
-                ILogEntryFormatter formatter = new SimpleFormatter();
+                ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
                 LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
                 LokiLoggerOptions options = new LokiLoggerOptions();
 
@@ -87,8 +87,8 @@ namespace LokiLoggingProvider.UnitTests.Logger
                     categoryName,
                     formatter,
                     processor,
-                    options.StaticLabelOptions,
-                    options.DynamicLabelOptions);
+                    options.StaticLabels,
+                    options.DynamicLabels);
 
                 // Act
                 bool result = logger.IsEnabled(logLevel);

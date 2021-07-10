@@ -1,6 +1,7 @@
 namespace LokiLoggingProvider
 {
     using System;
+    using LokiLoggingProvider.Extensions;
     using LokiLoggingProvider.LoggerFactories;
     using LokiLoggingProvider.Options;
     using Microsoft.Extensions.Logging;
@@ -17,12 +18,12 @@ namespace LokiLoggingProvider
 
         public LokiLoggerProvider(IOptionsMonitor<LokiLoggerOptions> options)
         {
-            this.loggerFactory = CreateLoggerFactory(options.CurrentValue);
+            this.loggerFactory = options.CurrentValue.CreateLoggerFactory();
 
             this.onChangeToken = options.OnChange(updatedOptions =>
             {
                 this.loggerFactory.Dispose();
-                this.loggerFactory = CreateLoggerFactory(updatedOptions);
+                this.loggerFactory = updatedOptions.CreateLoggerFactory();
             });
         }
 
@@ -52,26 +53,6 @@ namespace LokiLoggingProvider
         public void SetScopeProvider(IExternalScopeProvider scopeProvider)
         {
             this.loggerFactory.SetScopeProvider(scopeProvider);
-        }
-
-        private static ILokiLoggerFactory CreateLoggerFactory(LokiLoggerOptions options)
-        {
-            return options.Client switch
-            {
-                PushClient.Grpc => new GrpcLoggerFactory(
-                    options.GrpcOptions,
-                    options.StaticLabelOptions,
-                    options.DynamicLabelOptions,
-                    options.Formatter),
-
-                PushClient.Http => new HttpLoggerFactory(
-                    options.HttpOptions,
-                    options.StaticLabelOptions,
-                    options.DynamicLabelOptions,
-                    options.Formatter),
-
-                _ => new NullLoggerFactory(),
-            };
         }
     }
 }

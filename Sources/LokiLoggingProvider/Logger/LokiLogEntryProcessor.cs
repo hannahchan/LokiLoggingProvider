@@ -21,7 +21,6 @@ namespace LokiLoggingProvider.Logger
 
             this.backgroundThread = new Thread(this.ProcessLogQueue)
             {
-                IsBackground = true,
                 Name = nameof(LokiLogEntryProcessor),
             };
 

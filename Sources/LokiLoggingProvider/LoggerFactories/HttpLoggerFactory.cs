@@ -30,7 +30,7 @@ namespace LokiLoggingProvider.LoggerFactories
             HttpOptions httpOptions,
             StaticLabelOptions staticLabelOptions,
             DynamicLabelOptions dynamicLabelOptions,
-            Formatter formatter)
+            ILogEntryFormatter formatter)
         {
             HttpClient httpClient = new HttpClient
             {
@@ -43,7 +43,7 @@ namespace LokiLoggingProvider.LoggerFactories
             this.staticLabelOptions = staticLabelOptions;
             this.dynamicLabelOptions = dynamicLabelOptions;
 
-            this.formatter = formatter.CreateFormatter();
+            this.formatter = formatter;
         }
 
         public ILogger CreateLogger(string categoryName)
