@@ -2,7 +2,6 @@ namespace LokiLoggingProvider.Formatters
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using LokiLoggingProvider.Extensions;
     using LokiLoggingProvider.Options;
@@ -19,44 +18,42 @@ namespace LokiLoggingProvider.Formatters
 
         public string Format<TState>(LogEntry<TState> logEntry)
         {
-            Dictionary<string, object?> keyValuePairs = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase)
+            LogValues logValues = new LogValues()
             {
-                ["LogLevel"] = logEntry.LogLevel,
+                LogLevel = logEntry.LogLevel.ToString(),
             };
 
             if (this.options.IncludeCategory)
             {
-                keyValuePairs["Category"] = logEntry.Category;
+                logValues.Category = logEntry.Category;
             }
 
             if (this.options.IncludeEventId)
             {
-                keyValuePairs["EventId"] = logEntry.EventId;
+                logValues.EventId = logEntry.EventId.Id;
             }
 
-            keyValuePairs["Message"] = logEntry.Formatter(logEntry.State, logEntry.Exception);
+            logValues.Message = logEntry.Formatter(logEntry.State, logEntry.Exception);
 
             if (logEntry.Exception != null)
             {
-                keyValuePairs["Exception"] = logEntry.Exception.GetType();
+                logValues.Exception = logEntry.Exception.GetType();
             }
 
             if (logEntry.State is IEnumerable<KeyValuePair<string, object?>> state)
             {
                 foreach (KeyValuePair<string, object?> keyValuePair in state)
                 {
-                    keyValuePairs.TryAdd(keyValuePair.Key, keyValuePair.Value);
+                    logValues.TryAdd(keyValuePair.Key, keyValuePair.Value);
                 }
             }
 
-            if (this.options.IncludeActivityTracking && Activity.Current is Activity activity)
+            if (this.options.IncludeActivityTracking)
             {
-                keyValuePairs.TryAdd("SpanId", activity.GetSpanId());
-                keyValuePairs.TryAdd("TraceId", activity.GetTraceId());
-                keyValuePairs.TryAdd("ParentId", activity.GetParentId());
+                logValues.AddActivityTracking();
             }
 
-            string message = string.Join(" ", keyValuePairs.Select(keyValuePair => $"{ToLogfmtKey(keyValuePair.Key)}={ToLogfmtValue(keyValuePair.Value)}"));
+            string message = string.Join(" ", logValues.Select(keyValuePair => $"{ToLogfmtKey(keyValuePair.Key)}={ToLogfmtValue(keyValuePair.Value)}"));
 
             if (logEntry.Exception != null && this.options.PrintExceptions)
             {

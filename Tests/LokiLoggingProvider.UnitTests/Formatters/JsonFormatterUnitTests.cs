@@ -10,7 +10,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
     using Microsoft.Extensions.Logging.Abstractions;
     using Xunit;
 
-    public class LogfmtFormatterUnitTests
+    public class JsonFormatterUnitTests
     {
         public class Format
         {
@@ -18,8 +18,8 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntry_Expect_DefaultMessage()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                JsonFormatterOptions options = new JsonFormatterOptions();
+                JsonFormatter formatter = new JsonFormatter(options);
 
                 LogEntry<string> logEntry = new LogEntry<string>(
                     logLevel: LogLevel.Information,
@@ -33,19 +33,19 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
+                Assert.Equal("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\"}", result);
             }
 
             [Fact]
             public void When_FormattingLogEntryIncludingCategory_Expect_MessageWithCategory()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
+                JsonFormatterOptions options = new JsonFormatterOptions
                 {
                     IncludeCategory = true,
                 };
 
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                JsonFormatter formatter = new JsonFormatter(options);
 
                 LogEntry<string> logEntry = new LogEntry<string>(
                     logLevel: LogLevel.Information,
@@ -59,19 +59,19 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Category=MyCategory Message=\"My Log Message.\"", result);
+                Assert.Equal("{\"LogLevel\":\"Information\",\"Category\":\"MyCategory\",\"Message\":\"My Log Message.\"}", result);
             }
 
             [Fact]
             public void When_FormattingLogEntryIncludingEventId_Expect_MessageWithEventId()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
+                JsonFormatterOptions options = new JsonFormatterOptions
                 {
                     IncludeEventId = true,
                 };
 
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                JsonFormatter formatter = new JsonFormatter(options);
 
                 LogEntry<string> logEntry = new LogEntry<string>(
                     logLevel: LogLevel.Information,
@@ -85,63 +85,15 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Information EventId=0 Message=\"My Log Message.\"", result);
-            }
-
-            [Fact]
-            public void When_FormattingLogEntryWithException_Expect_MessageWithExceptionPrinted()
-            {
-                // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
-
-                LogEntry<string> logEntry = new LogEntry<string>(
-                    logLevel: LogLevel.Information,
-                    category: "MyCategory",
-                    eventId: default,
-                    state: "My Log Message.",
-                    exception: new Exception("My Exception."),
-                    formatter: (state, exception) => state.ToString());
-
-                // Act
-                string result = formatter.Format(logEntry);
-
-                // Assert
-                Assert.Equal($"LogLevel=Information Message=\"My Log Message.\" Exception=System.Exception{Environment.NewLine}System.Exception: My Exception.", result);
-            }
-
-            [Fact]
-            public void When_FormattingLogEntryWithException_Expect_MessageWithExceptionNotPrinted()
-            {
-                // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
-                {
-                    PrintExceptions = false,
-                };
-
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
-
-                LogEntry<string> logEntry = new LogEntry<string>(
-                    logLevel: LogLevel.Information,
-                    category: "MyCategory",
-                    eventId: default,
-                    state: "My Log Message.",
-                    exception: new Exception("My Exception."),
-                    formatter: (state, exception) => state.ToString());
-
-                // Act
-                string result = formatter.Format(logEntry);
-
-                // Assert
-                Assert.Equal($"LogLevel=Information Message=\"My Log Message.\" Exception=System.Exception", result);
+                Assert.Equal("{\"LogLevel\":\"Information\",\"EventId\":0,\"Message\":\"My Log Message.\"}", result);
             }
 
             [Fact]
             public void When_FormattingLogEntryWithEnumerableState_Expect_MessageWithStateKeyValues()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                JsonFormatterOptions options = new JsonFormatterOptions();
+                JsonFormatter formatter = new JsonFormatter(options);
 
                 Dictionary<string, object> state = new Dictionary<string, object>
                 {
@@ -166,23 +118,17 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Error Message=\"My Log Message.\" key1=123 key2=123.456 key3=True key4=value key5=\"\" key6=\"   \" key7=\"\"", result);
+                Assert.Equal("{\"LogLevel\":\"Error\",\"Message\":\"My Log Message.\",\"State\":{\"key1\":123,\"key2\":123.456,\"key3\":true,\"key4\":\"value\",\"key 5\":\"\",\"key   6\":\"   \",\"key7\":null}}", result);
             }
 
             [Fact]
-            public void When_FormattingLogEntryWithEnumerableState_Expect_MessageWithNoOverriddenKeys()
+            public void When_FormattingLogEntryWithEmptyEnumerableState_Expect_MessageWithoutState()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                JsonFormatterOptions options = new JsonFormatterOptions();
+                JsonFormatter formatter = new JsonFormatter(options);
 
-                Dictionary<string, object> state = new Dictionary<string, object>
-                {
-                    { "logLevel", "abc" },
-                    { "Category", "Nothing overridden here." },
-                    { "EventId", 123 },
-                    { "message", "Another message." },
-                };
+                Dictionary<string, object> state = new Dictionary<string, object>();
 
                 LogEntry<Dictionary<string, object>> logEntry = new LogEntry<Dictionary<string, object>>(
                     logLevel: LogLevel.Error,
@@ -196,15 +142,44 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Error Message=\"My Log Message.\" Category=\"Nothing overridden here.\" EventId=123", result);
+                Assert.Equal("{\"LogLevel\":\"Error\",\"Message\":\"My Log Message.\"}", result);
+            }
+
+            [Fact]
+            public void When_FormattingLogEntryWithEnumerableState_Expect_MessageWithNoOverriddenKeys()
+            {
+                // Arrange
+                JsonFormatterOptions options = new JsonFormatterOptions();
+                JsonFormatter formatter = new JsonFormatter(options);
+
+                List<KeyValuePair<string, object>> state = new List<KeyValuePair<string, object>>
+                {
+                    new KeyValuePair<string, object>("Category", "Nested Category"),
+                    new KeyValuePair<string, object>("DuplicateKey", "Should appear only once."),
+                    new KeyValuePair<string, object>("DuplicateKey", 123),
+                };
+
+                LogEntry<List<KeyValuePair<string, object>>> logEntry = new LogEntry<List<KeyValuePair<string, object>>>(
+                    logLevel: LogLevel.Error,
+                    category: default,
+                    eventId: default,
+                    state: state,
+                    exception: null,
+                    formatter: (state, exception) => "My Log Message.");
+
+                // Act
+                string result = formatter.Format(logEntry);
+
+                // Assert
+                Assert.Equal("{\"LogLevel\":\"Error\",\"Message\":\"My Log Message.\",\"State\":{\"Category\":\"Nested Category\",\"DuplicateKey\":\"Should appear only once.\"}}", result);
             }
 
             [Fact]
             public void When_FormattingLogEntryWithNonEnumerableState_Expect_MessageWithoutState()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                JsonFormatterOptions options = new JsonFormatterOptions();
+                JsonFormatter formatter = new JsonFormatter(options);
 
                 string state = "My State.";
 
@@ -220,19 +195,41 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Error Message=\"My Log Message.\"", result);
+                Assert.Equal("{\"LogLevel\":\"Error\",\"Message\":\"My Log Message.\"}", result);
+            }
+
+            [Fact]
+            public void When_FormattingLogEntryWithException_Expect_MessageWithException()
+            {
+                // Arrange
+                JsonFormatterOptions options = new JsonFormatterOptions();
+                JsonFormatter formatter = new JsonFormatter(options);
+
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Information,
+                    category: "MyCategory",
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: new Exception("My Exception."),
+                    formatter: (state, exception) => state.ToString());
+
+                // Act
+                string result = formatter.Format(logEntry);
+
+                // Assert
+                Assert.Equal("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\",\"Exception\":\"System.Exception\",\"ExceptionDetails\":\"System.Exception: My Exception.\"}", result);
             }
 
             [Fact]
             public void When_FormattingLogEntryIncludingActivityTracking_Expect_MessageWithActivityTracking()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
+                JsonFormatterOptions options = new JsonFormatterOptions
                 {
                     IncludeActivityTracking = true,
                 };
 
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                JsonFormatter formatter = new JsonFormatter(options);
 
                 LogEntry<string> logEntry = new LogEntry<string>(
                     logLevel: LogLevel.Information,
@@ -252,20 +249,20 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.StartsWith("LogLevel=Information Message=\"My Log Message.\" ", result);
-                Assert.EndsWith($" SpanId={childActivity.GetSpanId()} TraceId={childActivity.GetTraceId()} ParentId={parentActivity.GetSpanId()}", result);
+                Assert.StartsWith("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\",", result);
+                Assert.EndsWith($",\"SpanId\":\"{childActivity.GetSpanId()}\",\"TraceId\":\"{childActivity.GetTraceId()}\",\"ParentId\":\"{parentActivity.GetSpanId()}\"}}", result);
             }
 
             [Fact]
             public void When_FormattingLogEntryNotIncludingActivityTracking_Expect_MessageWithNoActivityTracking()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
+                JsonFormatterOptions options = new JsonFormatterOptions
                 {
                     IncludeActivityTracking = false,
                 };
 
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                JsonFormatter formatter = new JsonFormatter(options);
 
                 LogEntry<string> logEntry = new LogEntry<string>(
                     logLevel: LogLevel.Information,
@@ -285,7 +282,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
+                Assert.Equal("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\"}", result);
             }
         }
     }

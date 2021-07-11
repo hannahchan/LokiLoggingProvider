@@ -1,6 +1,5 @@
 namespace LokiLoggingProvider.Extensions
 {
-    using System;
     using LokiLoggingProvider.Formatters;
     using LokiLoggingProvider.LoggerFactories;
     using LokiLoggingProvider.Options;
@@ -11,7 +10,7 @@ namespace LokiLoggingProvider.Extensions
         {
             return options.Formatter switch
             {
-                Formatter.Json => throw new NotImplementedException(),
+                Formatter.Json => new JsonFormatter(options.JsonFormatter),
                 Formatter.Logfmt => new LogfmtFormatter(options.LogfmtFormatter),
                 _ => new SimpleFormatter(options.SimpleFormatter),
             };

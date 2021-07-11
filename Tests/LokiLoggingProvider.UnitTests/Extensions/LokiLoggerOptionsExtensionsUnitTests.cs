@@ -12,6 +12,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
         public class CreateFormatter
         {
             [Theory]
+            [InlineData(Formatter.Json, typeof(JsonFormatter))]
             [InlineData(Formatter.Logfmt, typeof(LogfmtFormatter))]
             [InlineData(Formatter.Simple, typeof(SimpleFormatter))]
             [InlineData((Formatter)100, typeof(SimpleFormatter))] // Invalid Formatter
