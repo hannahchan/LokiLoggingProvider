@@ -9,11 +9,11 @@ namespace LokiLoggingProvider.Formatters
 
     internal class LogfmtFormatter : ILogEntryFormatter
     {
-        private readonly LogfmtFormatterOptions options;
+        private readonly LogfmtFormatterOptions formatterOptions;
 
-        public LogfmtFormatter(LogfmtFormatterOptions options)
+        public LogfmtFormatter(LogfmtFormatterOptions formatterOptions)
         {
-            this.options = options;
+            this.formatterOptions = formatterOptions;
         }
 
         public string Format<TState>(LogEntry<TState> logEntry)
@@ -23,12 +23,12 @@ namespace LokiLoggingProvider.Formatters
                 LogLevel = logEntry.LogLevel.ToString(),
             };
 
-            if (this.options.IncludeCategory)
+            if (this.formatterOptions.IncludeCategory)
             {
                 logValues.Category = logEntry.Category;
             }
 
-            if (this.options.IncludeEventId)
+            if (this.formatterOptions.IncludeEventId)
             {
                 logValues.EventId = logEntry.EventId.Id;
             }
@@ -48,14 +48,14 @@ namespace LokiLoggingProvider.Formatters
                 }
             }
 
-            if (this.options.IncludeActivityTracking)
+            if (this.formatterOptions.IncludeActivityTracking)
             {
                 logValues.AddActivityTracking();
             }
 
             string message = string.Join(" ", logValues.Select(keyValuePair => $"{ToLogfmtKey(keyValuePair.Key)}={ToLogfmtValue(keyValuePair.Value)}"));
 
-            if (logEntry.Exception != null && this.options.PrintExceptions)
+            if (logEntry.Exception != null && this.formatterOptions.PrintExceptions)
             {
                 message += Environment.NewLine + logEntry.Exception.ToString();
             }

@@ -37,6 +37,28 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             }
 
             [Fact]
+            public void When_FormattingLogEntry_Expect_IndentedMessage()
+            {
+                // Arrange
+                JsonFormatterOptions options = new JsonFormatterOptions { WriteIndented = true };
+                JsonFormatter formatter = new JsonFormatter(options);
+
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Information,
+                    category: "MyCategory",
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                // Act
+                string result = formatter.Format(logEntry);
+
+                // Assert
+                Assert.Equal($"{{{Environment.NewLine}  \"LogLevel\": \"Information\",{Environment.NewLine}  \"Message\": \"My Log Message.\"{Environment.NewLine}}}", result);
+            }
+
+            [Fact]
             public void When_FormattingLogEntryIncludingCategory_Expect_MessageWithCategory()
             {
                 // Arrange

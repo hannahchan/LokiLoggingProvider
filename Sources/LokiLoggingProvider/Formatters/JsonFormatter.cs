@@ -9,11 +9,18 @@ namespace LokiLoggingProvider.Formatters
 
     internal class JsonFormatter : ILogEntryFormatter
     {
-        private readonly JsonFormatterOptions options;
+        private readonly JsonFormatterOptions formatterOptions;
 
-        public JsonFormatter(JsonFormatterOptions options)
+        private readonly JsonSerializerOptions serializerOptions;
+
+        public JsonFormatter(JsonFormatterOptions formatterOptions)
         {
-            this.options = options;
+            this.formatterOptions = formatterOptions;
+
+            this.serializerOptions = new JsonSerializerOptions
+            {
+                WriteIndented = this.formatterOptions.WriteIndented,
+            };
         }
 
         public string Format<TState>(LogEntry<TState> logEntry)
@@ -23,12 +30,12 @@ namespace LokiLoggingProvider.Formatters
                 LogLevel = logEntry.LogLevel.ToString(),
             };
 
-            if (this.options.IncludeCategory)
+            if (this.formatterOptions.IncludeCategory)
             {
                 logValues.Category = logEntry.Category;
             }
 
-            if (this.options.IncludeEventId)
+            if (this.formatterOptions.IncludeEventId)
             {
                 logValues.EventId = logEntry.EventId.Id;
             }
@@ -53,12 +60,12 @@ namespace LokiLoggingProvider.Formatters
                 logValues.ExceptionDetails = logEntry.Exception.ToString();
             }
 
-            if (this.options.IncludeActivityTracking)
+            if (this.formatterOptions.IncludeActivityTracking)
             {
                 logValues.AddActivityTracking();
             }
 
-            return JsonSerializer.Serialize(logValues);
+            return JsonSerializer.Serialize(logValues, this.serializerOptions);
         }
     }
 }

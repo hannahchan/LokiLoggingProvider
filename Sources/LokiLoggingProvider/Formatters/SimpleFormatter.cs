@@ -9,18 +9,18 @@ namespace LokiLoggingProvider.Formatters
 
     internal class SimpleFormatter : ILogEntryFormatter
     {
-        private readonly SimpleFormatterOptions options;
+        private readonly SimpleFormatterOptions formatterOptions;
 
-        public SimpleFormatter(SimpleFormatterOptions options)
+        public SimpleFormatter(SimpleFormatterOptions formatterOptions)
         {
-            this.options = options;
+            this.formatterOptions = formatterOptions;
         }
 
         public string Format<TState>(LogEntry<TState> logEntry)
         {
             string message = $"[{GetLogLevelString(logEntry.LogLevel)}] ";
 
-            if (this.options.IncludeActivityTracking && Activity.Current is Activity activity)
+            if (this.formatterOptions.IncludeActivityTracking && Activity.Current is Activity activity)
             {
                 message += $"{activity.GetTraceId()} - ";
             }

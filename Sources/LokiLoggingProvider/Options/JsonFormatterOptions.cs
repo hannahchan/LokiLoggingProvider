@@ -12,5 +12,8 @@ namespace LokiLoggingProvider.Options
         public bool IncludeEventId { get; set; }
 
         public bool IncludeScopes { get; set; }
+
+        /// <summary>Writes indented JSON.</summary>
+        public bool WriteIndented { get; set; }
     }
 }
