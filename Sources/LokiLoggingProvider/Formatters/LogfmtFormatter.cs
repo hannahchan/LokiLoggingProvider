@@ -5,6 +5,7 @@ namespace LokiLoggingProvider.Formatters
     using System.Linq;
     using LokiLoggingProvider.Extensions;
     using LokiLoggingProvider.Options;
+    using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Logging.Abstractions;
 
     internal class LogfmtFormatter : ILogEntryFormatter
@@ -16,7 +17,7 @@ namespace LokiLoggingProvider.Formatters
             this.formatterOptions = formatterOptions;
         }
 
-        public string Format<TState>(LogEntry<TState> logEntry)
+        public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
         {
             LogValues logValues = new LogValues()
             {
@@ -35,17 +36,33 @@ namespace LokiLoggingProvider.Formatters
 
             logValues.Message = logEntry.Formatter(logEntry.State, logEntry.Exception);
 
-            if (logEntry.Exception != null)
-            {
-                logValues.Exception = logEntry.Exception.GetType();
-            }
-
             if (logEntry.State is IEnumerable<KeyValuePair<string, object?>> state)
             {
                 foreach (KeyValuePair<string, object?> keyValuePair in state)
                 {
                     logValues.TryAdd(keyValuePair.Key, keyValuePair.Value);
                 }
+            }
+
+            if (this.formatterOptions.IncludeScopes && scopeProvider != null)
+            {
+                scopeProvider.ForEachScope(
+                    (scope, state) =>
+                    {
+                        if (scope is IEnumerable<KeyValuePair<string, object?>> keyValuePairs)
+                        {
+                            foreach (KeyValuePair<string, object?> keyValuePair in keyValuePairs)
+                            {
+                                state.TryAdd(keyValuePair.Key, keyValuePair.Value);
+                            }
+                        }
+                    },
+                    logValues);
+            }
+
+            if (logEntry.Exception != null)
+            {
+                logValues.Exception = logEntry.Exception.GetType();
             }
 
             if (this.formatterOptions.IncludeActivityTracking)

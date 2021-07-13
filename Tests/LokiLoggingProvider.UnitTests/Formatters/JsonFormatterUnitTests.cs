@@ -111,7 +111,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             }
 
             [Fact]
-            public void When_FormattingLogEntryWithEnumerableState_Expect_MessageWithStateKeyValues()
+            public void When_FormattingLogEntryWithEnumerableState_Expect_MessageWithStateDictionary()
             {
                 // Arrange
                 JsonFormatterOptions options = new JsonFormatterOptions();
@@ -168,7 +168,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             }
 
             [Fact]
-            public void When_FormattingLogEntryWithEnumerableState_Expect_MessageWithNoOverriddenKeys()
+            public void When_FormattingLogEntryWithEnumerableState_Expect_MessageWithStateKeyValuePairs()
             {
                 // Arrange
                 JsonFormatterOptions options = new JsonFormatterOptions();
@@ -176,8 +176,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
 
                 List<KeyValuePair<string, object>> state = new List<KeyValuePair<string, object>>
                 {
-                    new KeyValuePair<string, object>("Category", "Nested Category"),
-                    new KeyValuePair<string, object>("DuplicateKey", "Should appear only once."),
+                    new KeyValuePair<string, object>("DuplicateKey", "abc"),
                     new KeyValuePair<string, object>("DuplicateKey", 123),
                 };
 
@@ -193,7 +192,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("{\"LogLevel\":\"Error\",\"Message\":\"My Log Message.\",\"State\":{\"Category\":\"Nested Category\",\"DuplicateKey\":\"Should appear only once.\"}}", result);
+                Assert.Equal("{\"LogLevel\":\"Error\",\"Message\":\"My Log Message.\",\"State\":[{\"Key\":\"DuplicateKey\",\"Value\":\"abc\"},{\"Key\":\"DuplicateKey\",\"Value\":123}]}", result);
             }
 
             [Fact]
@@ -305,6 +304,164 @@ namespace LokiLoggingProvider.UnitTests.Formatters
 
                 // Assert
                 Assert.Equal("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\"}", result);
+            }
+
+            [Fact]
+            public void When_FormattingLogEntryIncludingScopeWithScopeProvider_Expect_MessageWithScopes()
+            {
+                // Arrange
+                JsonFormatterOptions options = new JsonFormatterOptions { IncludeScopes = true };
+                JsonFormatter formatter = new JsonFormatter(options);
+
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Information,
+                    category: "MyCategory",
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                IExternalScopeProvider scopeProvider = new MockScopeProvider(new List<object>
+                {
+                    "A String",
+                    new
+                    {
+                        Name = "An Object",
+                        Value = 123,
+                    },
+                    new List<KeyValuePair<string, object>>
+                    {
+                        new KeyValuePair<string, object>("DuplicateKey", "abc"),
+                        new KeyValuePair<string, object>("DuplicateKey", 123),
+                    },
+                    new Dictionary<string, object>
+                    {
+                        ["Key1"] = "abc",
+                        ["Key2"] = 123,
+                    },
+                });
+
+                // Act
+                string result = formatter.Format(logEntry, scopeProvider);
+
+                // Assert
+                Assert.StartsWith("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\",\"Scopes\":[\"A String\",{\"Name\":\"An Object\",\"Value\":123},", result);
+                Assert.EndsWith("[{\"Key\":\"DuplicateKey\",\"Value\":\"abc\"},{\"Key\":\"DuplicateKey\",\"Value\":123}],{\"Key1\":\"abc\",\"Key2\":123}]}", result);
+            }
+
+            [Fact]
+            public void When_FormattingLogEntryIncludingScopeWithScopeProvider_Expect_MessageWithoutScopes()
+            {
+                // Arrange
+                JsonFormatterOptions options = new JsonFormatterOptions { IncludeScopes = true };
+                JsonFormatter formatter = new JsonFormatter(options);
+
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Information,
+                    category: "MyCategory",
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                IExternalScopeProvider scopeProvider = new MockScopeProvider(new List<object>());
+
+                // Act
+                string result = formatter.Format(logEntry, scopeProvider);
+
+                // Assert
+                Assert.Equal("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\"}", result);
+            }
+
+            [Fact]
+            public void When_FormattingLogEntryIncludingScopeWithNullScopeProvider_Expect_MessageWithoutScopes()
+            {
+                // Arrange
+                JsonFormatterOptions options = new JsonFormatterOptions { IncludeScopes = true };
+                JsonFormatter formatter = new JsonFormatter(options);
+
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Information,
+                    category: "MyCategory",
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                // Act
+                string result = formatter.Format(logEntry, null);
+
+                // Assert
+                Assert.Equal("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\"}", result);
+            }
+
+            [Fact]
+            public void When_FormattingLogEntryNotIncludingScopeWithScopeProvider_Expect_MessageWithoutScopes()
+            {
+                // Arrange
+                JsonFormatterOptions options = new JsonFormatterOptions { IncludeScopes = false };
+                JsonFormatter formatter = new JsonFormatter(options);
+
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Information,
+                    category: "MyCategory",
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                IExternalScopeProvider scopeProvider = new MockScopeProvider(new List<object> { "A String Scope" });
+
+                // Act
+                string result = formatter.Format(logEntry, scopeProvider);
+
+                // Assert
+                Assert.Equal("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\"}", result);
+            }
+
+            [Fact]
+            public void When_FormattingLogEntryNotIncludingScopeWithNullScopeProvider_Expect_MessageWithoutScopes()
+            {
+                // Arrange
+                JsonFormatterOptions options = new JsonFormatterOptions { IncludeScopes = false };
+                JsonFormatter formatter = new JsonFormatter(options);
+
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Information,
+                    category: "MyCategory",
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                // Act
+                string result = formatter.Format(logEntry, null);
+
+                // Assert
+                Assert.Equal("{\"LogLevel\":\"Information\",\"Message\":\"My Log Message.\"}", result);
+            }
+
+            private class MockScopeProvider : IExternalScopeProvider
+            {
+                private readonly List<object> scopes;
+
+                public MockScopeProvider(List<object> scopes)
+                {
+                    this.scopes = scopes;
+                }
+
+                public void ForEachScope<TState>(Action<object, TState> callback, TState state)
+                {
+                    foreach (object scope in this.scopes)
+                    {
+                        callback(scope, state);
+                    }
+                }
+
+                public IDisposable Push(object state)
+                {
+                    throw new NotImplementedException();
+                }
             }
         }
     }

@@ -64,7 +64,7 @@ namespace LokiLoggingProvider.Logger
 
             LogEntry<TState> logEntry = new LogEntry<TState>(logLevel, this.categoryName, eventId, state, exception, formatter);
 
-            this.processor.EnqueueMessage(new LokiLogEntry(timestamp, labels, this.formatter.Format(logEntry)));
+            this.processor.EnqueueMessage(new LokiLogEntry(timestamp, labels, this.formatter.Format(logEntry, this.ScopeProvider)));
         }
     }
 }

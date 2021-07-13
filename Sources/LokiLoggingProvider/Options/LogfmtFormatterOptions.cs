@@ -11,6 +11,7 @@ namespace LokiLoggingProvider.Options
         /// <summary>Includes the 'EventId' key with the value set to the Event ID of the log entry.</summary>
         public bool IncludeEventId { get; set; }
 
+        /// <summary>Includes log scopes in the formatted output.</summary>
         public bool IncludeScopes { get; set; }
 
         /// <summary>Appends exception details to the end of the log entry.</summary>

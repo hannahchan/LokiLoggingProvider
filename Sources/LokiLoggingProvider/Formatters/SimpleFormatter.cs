@@ -16,7 +16,7 @@ namespace LokiLoggingProvider.Formatters
             this.formatterOptions = formatterOptions;
         }
 
-        public string Format<TState>(LogEntry<TState> logEntry)
+        public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
         {
             string message = $"[{GetLogLevelString(logEntry.LogLevel)}] ";
 
