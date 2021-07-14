@@ -12,13 +12,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             LogValues logValues = new LogValues();
 
             // Act
-            logValues.LogLevel = nameof(logValues.LogLevel);
-            logValues.Category = nameof(logValues.Category);
-            logValues.EventId = nameof(logValues.EventId);
-            logValues.Message = nameof(logValues.Message);
-            logValues.State = nameof(logValues.State);
-            logValues.Exception = nameof(logValues.Exception);
-            logValues.ExceptionDetails = nameof(logValues.ExceptionDetails);
+            logValues.SetLogLevel(nameof(logValues.SetLogLevel));
+            logValues.SetCategory(nameof(logValues.SetCategory));
+            logValues.SetEventId(nameof(logValues.SetEventId));
+            logValues.SetMessage(nameof(logValues.SetMessage));
+            logValues.SetState(nameof(logValues.SetState));
+            logValues.SetScopes(nameof(logValues.SetScopes));
+            logValues.SetException(nameof(logValues.SetException));
+            logValues.SetExceptionDetails(nameof(logValues.SetExceptionDetails));
 
             // Assert
             Assert.Collection(
@@ -26,63 +27,43 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 keyValuePair =>
                 {
                     Assert.Equal("LogLevel", keyValuePair.Key);
-                    Assert.Equal("LogLevel", keyValuePair.Value);
+                    Assert.Equal("SetLogLevel", keyValuePair.Value);
                 },
                 keyValuePair =>
                 {
                     Assert.Equal("Category", keyValuePair.Key);
-                    Assert.Equal("Category", keyValuePair.Value);
+                    Assert.Equal("SetCategory", keyValuePair.Value);
                 },
                 keyValuePair =>
                 {
                     Assert.Equal("EventId", keyValuePair.Key);
-                    Assert.Equal("EventId", keyValuePair.Value);
+                    Assert.Equal("SetEventId", keyValuePair.Value);
                 },
                 keyValuePair =>
                 {
                     Assert.Equal("Message", keyValuePair.Key);
-                    Assert.Equal("Message", keyValuePair.Value);
+                    Assert.Equal("SetMessage", keyValuePair.Value);
                 },
                 keyValuePair =>
                 {
                     Assert.Equal("State", keyValuePair.Key);
-                    Assert.Equal("State", keyValuePair.Value);
+                    Assert.Equal("SetState", keyValuePair.Value);
+                },
+                keyValuePair =>
+                {
+                    Assert.Equal("Scopes", keyValuePair.Key);
+                    Assert.Equal("SetScopes", keyValuePair.Value);
                 },
                 keyValuePair =>
                 {
                     Assert.Equal("Exception", keyValuePair.Key);
-                    Assert.Equal("Exception", keyValuePair.Value);
+                    Assert.Equal("SetException", keyValuePair.Value);
                 },
                 keyValuePair =>
                 {
                     Assert.Equal("ExceptionDetails", keyValuePair.Key);
-                    Assert.Equal("ExceptionDetails", keyValuePair.Value);
+                    Assert.Equal("SetExceptionDetails", keyValuePair.Value);
                 });
-        }
-
-        [Fact]
-        public void When_GettingLogValues_Expect_LogValues()
-        {
-            // Arrange
-            LogValues logValues = new LogValues
-            {
-                LogLevel = nameof(logValues.LogLevel),
-                Category = nameof(logValues.Category),
-                EventId = nameof(logValues.EventId),
-                Message = nameof(logValues.Message),
-                State = nameof(logValues.State),
-                Exception = nameof(logValues.Exception),
-                ExceptionDetails = nameof(logValues.ExceptionDetails),
-            };
-
-            // Act and Assert
-            Assert.Equal("LogLevel", logValues.LogLevel);
-            Assert.Equal("Category", logValues.Category);
-            Assert.Equal("EventId", logValues.EventId);
-            Assert.Equal("Message", logValues.Message);
-            Assert.Equal("State", logValues.State);
-            Assert.Equal("Exception", logValues.Exception);
-            Assert.Equal("ExceptionDetails", logValues.ExceptionDetails);
         }
     }
 }

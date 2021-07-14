@@ -19,22 +19,20 @@ namespace LokiLoggingProvider.Formatters
 
         public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
         {
-            LogValues logValues = new LogValues()
-            {
-                LogLevel = logEntry.LogLevel.ToString(),
-            };
+            LogValues logValues = new LogValues();
+            logValues.SetLogLevel(logEntry.LogLevel.ToString());
 
             if (this.formatterOptions.IncludeCategory)
             {
-                logValues.Category = logEntry.Category;
+                logValues.SetCategory(logEntry.Category);
             }
 
             if (this.formatterOptions.IncludeEventId)
             {
-                logValues.EventId = logEntry.EventId.Id;
+                logValues.SetEventId(logEntry.EventId.Id);
             }
 
-            logValues.Message = logEntry.Formatter(logEntry.State, logEntry.Exception);
+            logValues.SetMessage(logEntry.Formatter(logEntry.State, logEntry.Exception));
 
             if (logEntry.State is IEnumerable<KeyValuePair<string, object?>> state)
             {
@@ -62,7 +60,7 @@ namespace LokiLoggingProvider.Formatters
 
             if (logEntry.Exception != null)
             {
-                logValues.Exception = logEntry.Exception.GetType();
+                logValues.SetException(logEntry.Exception.GetType());
             }
 
             if (this.formatterOptions.IncludeActivityTracking)

@@ -26,32 +26,30 @@ namespace LokiLoggingProvider.Formatters
 
         public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
         {
-            LogValues logValues = new LogValues
-            {
-                LogLevel = logEntry.LogLevel.ToString(),
-            };
+            LogValues logValues = new LogValues();
+            logValues.SetLogLevel(logEntry.LogLevel.ToString());
 
             if (this.formatterOptions.IncludeCategory)
             {
-                logValues.Category = logEntry.Category;
+                logValues.SetCategory(logEntry.Category);
             }
 
             if (this.formatterOptions.IncludeEventId)
             {
-                logValues.EventId = logEntry.EventId.Id;
+                logValues.SetEventId(logEntry.EventId.Id);
             }
 
-            logValues.Message = logEntry.Formatter(logEntry.State, logEntry.Exception);
+            logValues.SetMessage(logEntry.Formatter(logEntry.State, logEntry.Exception));
 
             if (logEntry.State is IEnumerable<KeyValuePair<string, object?>> state && state.Any())
             {
                 try
                 {
-                    logValues.State = new Dictionary<string, object?>(state);
+                    logValues.SetState(new Dictionary<string, object?>(state));
                 }
                 catch
                 {
-                    logValues.State = state;
+                    logValues.SetState(state);
                 }
             }
 
@@ -82,14 +80,14 @@ namespace LokiLoggingProvider.Formatters
 
                 if (scopes.Any())
                 {
-                    logValues["Scopes"] = scopes;
+                    logValues.SetScopes(scopes);
                 }
             }
 
             if (logEntry.Exception != null)
             {
-                logValues.Exception = logEntry.Exception.GetType().ToString();
-                logValues.ExceptionDetails = logEntry.Exception.ToString();
+                logValues.SetException(logEntry.Exception.GetType().ToString());
+                logValues.SetExceptionDetails(logEntry.Exception.ToString());
             }
 
             if (this.formatterOptions.IncludeActivityTracking)

@@ -10,63 +10,44 @@ namespace LokiLoggingProvider.Formatters
         {
         }
 
-        public object? LogLevel
+        public void SetLogLevel(object? value)
         {
-            get => this[Key.LogLevel];
-            set => this[Key.LogLevel] = value;
+            this["LogLevel"] = value;
         }
 
-        public object? Category
+        public void SetCategory(object? value)
         {
-            get => this[Key.Category];
-            set => this[Key.Category] = value;
+            this["Category"] = value;
         }
 
-        public object? EventId
+        public void SetEventId(object? value)
         {
-            get => this[Key.EventId];
-            set => this[Key.EventId] = value;
+            this["EventId"] = value;
         }
 
-        public object? Message
+        public void SetMessage(object? value)
         {
-            get => this[Key.Message];
-            set => this[Key.Message] = value;
+            this["Message"] = value;
         }
 
-        public object? State
+        public void SetState(object? value)
         {
-            get => this[Key.State];
-            set => this[Key.State] = value;
+            this["State"] = value;
         }
 
-        public object? Exception
+        public void SetScopes(object? value)
         {
-            get => this[Key.Exception];
-            set => this[Key.Exception] = value;
+            this["Scopes"] = value;
         }
 
-        public object? ExceptionDetails
+        public void SetException(object? value)
         {
-            get => this[Key.ExceptionDetails];
-            set => this[Key.ExceptionDetails] = value;
+            this["Exception"] = value;
         }
 
-        private static class Key
+        public void SetExceptionDetails(object? value)
         {
-            public const string LogLevel = "LogLevel";
-
-            public const string Category = "Category";
-
-            public const string EventId = "EventId";
-
-            public const string Message = "Message";
-
-            public const string State = "State";
-
-            public const string Exception = "Exception";
-
-            public const string ExceptionDetails = "ExceptionDetails";
+            this["ExceptionDetails"] = value;
         }
     }
 }
