@@ -2,7 +2,6 @@ namespace LokiLoggingProvider.UnitTests.PushClients
 {
     using System;
     using System.Collections.Generic;
-    using System.Collections.ObjectModel;
     using System.Net;
     using System.Net.Http;
     using System.Net.Mime;
@@ -50,11 +49,11 @@ namespace LokiLoggingProvider.UnitTests.PushClients
 
                 LokiLogEntry entry = new LokiLogEntry(
                     timestamp: new DateTime(2019, 11, 30, 01, 00, 00, DateTimeKind.Utc),
-                    labels: new ReadOnlyDictionary<string, string>(new Dictionary<string, string>
+                    labels: new LabelValues
                     {
                         { "key1", "value1" },
                         { "key2", "value2" },
-                    }),
+                    },
                     message: "My log message.");
 
                 // Act

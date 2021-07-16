@@ -1,7 +1,6 @@
 namespace LokiLoggingProvider.Logger
 {
     using System;
-    using System.Collections.Generic;
     using LokiLoggingProvider.Formatters;
     using LokiLoggingProvider.Options;
     using Microsoft.Extensions.Logging;
@@ -15,7 +14,7 @@ namespace LokiLoggingProvider.Logger
 
         private readonly LokiLogEntryProcessor processor;
 
-        private readonly IReadOnlyDictionary<string, string> staticLabels;
+        private readonly LabelValues staticLabels;
 
         private readonly DynamicLabelOptions dynamicLabelOptions;
 
@@ -30,7 +29,7 @@ namespace LokiLoggingProvider.Logger
             this.formatter = formatter;
             this.processor = processor;
 
-            this.staticLabels = staticLabelOptions.ToReadOnlyDictionary();
+            this.staticLabels = new LabelValues(staticLabelOptions);
             this.dynamicLabelOptions = dynamicLabelOptions;
         }
 
@@ -53,18 +52,13 @@ namespace LokiLoggingProvider.Logger
                 return;
             }
 
-            DateTime timestamp = DateTime.UtcNow;
-
-            IReadOnlyDictionary<string, string> labels = this.staticLabels.AddDynamicLables(
-                this.dynamicLabelOptions,
-                this.categoryName,
-                logLevel,
-                eventId,
-                exception);
-
             LogEntry<TState> logEntry = new LogEntry<TState>(logLevel, this.categoryName, eventId, state, exception, formatter);
 
-            this.processor.EnqueueMessage(new LokiLogEntry(timestamp, labels, this.formatter.Format(logEntry, this.ScopeProvider)));
+            DateTime timestamp = DateTime.UtcNow;
+            LabelValues labels = this.staticLabels.AddDynamicLabels(this.dynamicLabelOptions, logEntry);
+            string message = this.formatter.Format(logEntry, this.ScopeProvider);
+
+            this.processor.EnqueueMessage(new LokiLogEntry(timestamp, labels, message));
         }
     }
 }

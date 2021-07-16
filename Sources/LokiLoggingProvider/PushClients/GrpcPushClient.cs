@@ -40,7 +40,7 @@ namespace LokiLoggingProvider.PushClients
 
             StreamAdapter stream = new StreamAdapter
             {
-                Labels = entry.Labels.ToLabelString(),
+                Labels = $"{{{entry.Labels}}}",
             };
 
             stream.Entries.Add(new EntryAdapter
