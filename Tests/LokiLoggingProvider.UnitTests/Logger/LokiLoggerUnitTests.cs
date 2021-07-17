@@ -5,7 +5,6 @@ namespace LokiLoggingProvider.UnitTests.Logger
     using LokiLoggingProvider.Formatters;
     using LokiLoggingProvider.Logger;
     using LokiLoggingProvider.Options;
-    using LokiLoggingProvider.PushClients;
     using Microsoft.Extensions.Logging;
     using Xunit;
 
@@ -17,11 +16,9 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_BeginningScope_Expect_Scope()
             {
                 // Arrange
-                MockLokiPushClient client = new MockLokiPushClient();
-
                 string categoryName = nameof(categoryName);
                 ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
-                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
+                ILokiLogEntryProcessor processor = new MockLogEntryProcessor();
                 LokiLoggerOptions options = new LokiLoggerOptions();
                 MockScopeProvider scopeProvider = new MockScopeProvider();
 
@@ -76,11 +73,9 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_LogLevelIsEnabled_Expect_IsEnabled(LogLevel logLevel, bool isEnabled)
             {
                 // Arrange
-                MockLokiPushClient client = new MockLokiPushClient();
-
                 string categoryName = nameof(categoryName);
                 ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
-                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
+                ILokiLogEntryProcessor processor = new MockLogEntryProcessor();
                 LokiLoggerOptions options = new LokiLoggerOptions();
 
                 LokiLogger logger = new LokiLogger(
@@ -100,25 +95,75 @@ namespace LokiLoggingProvider.UnitTests.Logger
 
         public class Log
         {
+            [Fact]
+            public void When_LoggingEntry_Expect_Logged()
+            {
+                // Arrange
+                string categoryName = nameof(categoryName);
+                ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
+                MockLogEntryProcessor processor = new MockLogEntryProcessor();
+                LokiLoggerOptions options = new LokiLoggerOptions();
+
+                LokiLogger logger = new LokiLogger(
+                    categoryName,
+                    formatter,
+                    processor,
+                    options.StaticLabels,
+                    options.DynamicLabels);
+
+                // Act
+                logger.Log(
+                    logLevel: LogLevel.Information,
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                // Assert
+                Assert.Collection(processor.LogEntries, logEntry => Assert.Equal("[INFO] My Log Message.", logEntry.Message));
+            }
+
+            [Fact]
+            public void When_LoggingEntry_Expect_NotLogged()
+            {
+                // Arrange
+                string categoryName = nameof(categoryName);
+                ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
+                MockLogEntryProcessor processor = new MockLogEntryProcessor();
+                LokiLoggerOptions options = new LokiLoggerOptions();
+
+                LokiLogger logger = new LokiLogger(
+                    categoryName,
+                    formatter,
+                    processor,
+                    options.StaticLabels,
+                    options.DynamicLabels);
+
+                // Act
+                logger.Log(
+                    logLevel: LogLevel.None,
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                // Assert
+                Assert.Empty(processor.LogEntries);
+            }
         }
 
-        private sealed class MockLokiPushClient : ILokiPushClient
+        private sealed class MockLogEntryProcessor : ILokiLogEntryProcessor
         {
-            private readonly IList<LokiLogEntry> receivedLogMessageEntries = new List<LokiLogEntry>();
+            public List<LokiLogEntry> LogEntries { get; } = new List<LokiLogEntry>();
 
             public void Dispose()
             {
-                this.receivedLogMessageEntries.Clear();
+                // Do nothing
             }
 
-            public void Push(LokiLogEntry entry)
+            public void EnqueueMessage(LokiLogEntry message)
             {
-                this.receivedLogMessageEntries.Add(entry);
-            }
-
-            public IEnumerable<LokiLogEntry> GetReceivedLogEntries()
-            {
-                return this.receivedLogMessageEntries;
+                this.LogEntries.Add(message);
             }
         }
 

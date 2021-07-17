@@ -5,7 +5,7 @@ namespace LokiLoggingProvider.Logger
     using System.Threading;
     using LokiLoggingProvider.PushClients;
 
-    internal sealed class LokiLogEntryProcessor : IDisposable
+    internal sealed class LokiLogEntryProcessor : ILokiLogEntryProcessor
     {
         private const int MaxQueuedMessages = 1024;
 

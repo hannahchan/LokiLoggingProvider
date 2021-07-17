@@ -9,14 +9,14 @@ namespace LokiLoggingProvider.Logger
         {
         }
 
-        public static IExternalScopeProvider Instance { get; } = new NullExternalScopeProvider();
+        public static NullExternalScopeProvider Instance { get; } = new NullExternalScopeProvider();
 
-        void IExternalScopeProvider.ForEachScope<TState>(Action<object, TState> callback, TState state)
+        public void ForEachScope<TState>(Action<object, TState> callback, TState state)
         {
             // Do nothing
         }
 
-        IDisposable IExternalScopeProvider.Push(object state)
+        public IDisposable Push(object state)
         {
             return NullScope.Instance;
         }

@@ -12,7 +12,7 @@ namespace LokiLoggingProvider.Logger
 
         private readonly ILogEntryFormatter formatter;
 
-        private readonly LokiLogEntryProcessor processor;
+        private readonly ILokiLogEntryProcessor processor;
 
         private readonly LabelValues staticLabels;
 
@@ -21,7 +21,7 @@ namespace LokiLoggingProvider.Logger
         public LokiLogger(
             string categoryName,
             ILogEntryFormatter formatter,
-            LokiLogEntryProcessor processor,
+            ILokiLogEntryProcessor processor,
             StaticLabelOptions staticLabelOptions,
             DynamicLabelOptions dynamicLabelOptions)
         {
