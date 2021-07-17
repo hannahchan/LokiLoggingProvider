@@ -121,6 +121,32 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             }
 
             [Fact]
+            public void When_FormattingLogEntryWithException_Expect_Message()
+            {
+                // Arrange
+                SimpleFormatterOptions options = new SimpleFormatterOptions();
+                SimpleFormatter formatter = new SimpleFormatter(options);
+
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Error,
+                    category: default,
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: new Exception("My Exception."),
+                    formatter: (state, exception) => state.ToString());
+
+                // Act
+                string result = formatter.Format(logEntry);
+
+                // Assert
+                Assert.Equal($"[EROR] My Log Message.{Environment.NewLine}System.Exception: My Exception.", result);
+            }
+        }
+
+        [Collection(TestCollection.Activity)]
+        public class FormatWithActivityTracking
+        {
+            [Fact]
             public void When_FormattingLogEntryNotIncludingActivityTrackingWithActivity_Expect_MessageWithNoActivityTracking()
             {
                 // Arrange
@@ -174,28 +200,6 @@ namespace LokiLoggingProvider.UnitTests.Formatters
 
                 // Assert
                 Assert.Equal($"[INFO] My Log Message.", result);
-            }
-
-            [Fact]
-            public void When_FormattingLogEntryWithException_Expect_Message()
-            {
-                // Arrange
-                SimpleFormatterOptions options = new SimpleFormatterOptions();
-                SimpleFormatter formatter = new SimpleFormatter(options);
-
-                LogEntry<string> logEntry = new LogEntry<string>(
-                    logLevel: LogLevel.Error,
-                    category: default,
-                    eventId: default,
-                    state: "My Log Message.",
-                    exception: new Exception("My Exception."),
-                    formatter: (state, exception) => state.ToString());
-
-                // Act
-                string result = formatter.Format(logEntry);
-
-                // Assert
-                Assert.Equal($"[EROR] My Log Message.{Environment.NewLine}System.Exception: My Exception.", result);
             }
         }
     }

@@ -6,6 +6,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
 
     public class ActivityExtensionsUnitTests
     {
+        [Collection(TestCollection.Activity)]
         public class GetSpanId
         {
             [Fact]
@@ -56,6 +57,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             }
         }
 
+        [Collection(TestCollection.Activity)]
         public class GetTraceId
         {
             [Fact]
@@ -106,6 +108,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             }
         }
 
+        [Collection(TestCollection.Activity)]
         public class GetParentId
         {
             [Fact]

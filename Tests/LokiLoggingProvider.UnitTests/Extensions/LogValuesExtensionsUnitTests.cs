@@ -7,6 +7,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
 
     public class LogValuesExtensionsUnitTests
     {
+        [Collection(TestCollection.Activity)]
         public class AddActivityTracking
         {
             [Fact]

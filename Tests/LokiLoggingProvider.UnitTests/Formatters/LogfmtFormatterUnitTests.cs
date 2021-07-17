@@ -224,71 +224,6 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             }
 
             [Fact]
-            public void When_FormattingLogEntryIncludingActivityTracking_Expect_MessageWithActivityTracking()
-            {
-                // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
-                {
-                    IncludeActivityTracking = true,
-                };
-
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
-
-                LogEntry<string> logEntry = new LogEntry<string>(
-                    logLevel: LogLevel.Information,
-                    category: "MyCategory",
-                    eventId: default,
-                    state: "My Log Message.",
-                    exception: null,
-                    formatter: (state, exception) => state.ToString());
-
-                using Activity parentActivity = new Activity(nameof(parentActivity));
-                using Activity childActivity = new Activity(nameof(childActivity));
-
-                // Act
-                parentActivity.Start();
-                childActivity.Start();
-
-                string result = formatter.Format(logEntry);
-
-                // Assert
-                Assert.StartsWith("LogLevel=Information Message=\"My Log Message.\" ", result);
-                Assert.EndsWith($" SpanId={childActivity.GetSpanId()} TraceId={childActivity.GetTraceId()} ParentId={parentActivity.GetSpanId()}", result);
-            }
-
-            [Fact]
-            public void When_FormattingLogEntryNotIncludingActivityTracking_Expect_MessageWithNoActivityTracking()
-            {
-                // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
-                {
-                    IncludeActivityTracking = false,
-                };
-
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
-
-                LogEntry<string> logEntry = new LogEntry<string>(
-                    logLevel: LogLevel.Information,
-                    category: "MyCategory",
-                    eventId: default,
-                    state: "My Log Message.",
-                    exception: null,
-                    formatter: (state, exception) => state.ToString());
-
-                using Activity parentActivity = new Activity(nameof(parentActivity));
-                using Activity childActivity = new Activity(nameof(childActivity));
-
-                // Act
-                parentActivity.Start();
-                childActivity.Start();
-
-                string result = formatter.Format(logEntry);
-
-                // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
-            }
-
-            [Fact]
             public void When_FormattingLogEntryIncludingScopeWithScopeProvider_Expect_MessageWithScopes()
             {
                 // Arrange
@@ -422,28 +357,97 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 // Assert
                 Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
             }
+        }
 
-            private class MockScopeProvider : IExternalScopeProvider
+        [Collection(TestCollection.Activity)]
+        public class FormatWithActivityTracking
+        {
+            [Fact]
+            public void When_FormattingLogEntryIncludingActivityTracking_Expect_MessageWithActivityTracking()
             {
-                private readonly List<object> scopes;
-
-                public MockScopeProvider(List<object> scopes)
+                // Arrange
+                LogfmtFormatterOptions options = new LogfmtFormatterOptions
                 {
-                    this.scopes = scopes;
-                }
+                    IncludeActivityTracking = true,
+                };
 
-                public void ForEachScope<TState>(Action<object, TState> callback, TState state)
-                {
-                    foreach (object scope in this.scopes)
-                    {
-                        callback(scope, state);
-                    }
-                }
+                LogfmtFormatter formatter = new LogfmtFormatter(options);
 
-                public IDisposable Push(object state)
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Information,
+                    category: "MyCategory",
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                using Activity parentActivity = new Activity(nameof(parentActivity));
+                using Activity childActivity = new Activity(nameof(childActivity));
+
+                // Act
+                parentActivity.Start();
+                childActivity.Start();
+
+                string result = formatter.Format(logEntry);
+
+                // Assert
+                Assert.StartsWith("LogLevel=Information Message=\"My Log Message.\" ", result);
+                Assert.EndsWith($" SpanId={childActivity.GetSpanId()} TraceId={childActivity.GetTraceId()} ParentId={parentActivity.GetSpanId()}", result);
+            }
+
+            [Fact]
+            public void When_FormattingLogEntryNotIncludingActivityTracking_Expect_MessageWithNoActivityTracking()
+            {
+                // Arrange
+                LogfmtFormatterOptions options = new LogfmtFormatterOptions
                 {
-                    throw new NotImplementedException();
+                    IncludeActivityTracking = false,
+                };
+
+                LogfmtFormatter formatter = new LogfmtFormatter(options);
+
+                LogEntry<string> logEntry = new LogEntry<string>(
+                    logLevel: LogLevel.Information,
+                    category: "MyCategory",
+                    eventId: default,
+                    state: "My Log Message.",
+                    exception: null,
+                    formatter: (state, exception) => state.ToString());
+
+                using Activity parentActivity = new Activity(nameof(parentActivity));
+                using Activity childActivity = new Activity(nameof(childActivity));
+
+                // Act
+                parentActivity.Start();
+                childActivity.Start();
+
+                string result = formatter.Format(logEntry);
+
+                // Assert
+                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
+            }
+        }
+
+        private class MockScopeProvider : IExternalScopeProvider
+        {
+            private readonly List<object> scopes;
+
+            public MockScopeProvider(List<object> scopes)
+            {
+                this.scopes = scopes;
+            }
+
+            public void ForEachScope<TState>(Action<object, TState> callback, TState state)
+            {
+                foreach (object scope in this.scopes)
+                {
+                    callback(scope, state);
                 }
+            }
+
+            public IDisposable Push(object state)
+            {
+                throw new NotImplementedException();
             }
         }
     }
