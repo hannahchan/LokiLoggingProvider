@@ -2,6 +2,25 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>LokiLoggingProvider</PackageId>
+    <PackageVersion>1.0.0-alpha</PackageVersion>
+    <Title>Loki Logging Provider</Title>
+    <Authors>Hannah Chan</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/hannahchan/LokiLoggingProvider</PackageProjectUrl>
+    <Description>Send logs to Grafana Loki.</Description>
+    <PackageTags>Grafana;Loki;</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/hannahchan/LokiLoggingProvider.git</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.17.3" />
     <PackageReference Include="Grpc.Net.Client" Version="2.38.0" />
