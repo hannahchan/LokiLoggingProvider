@@ -2,7 +2,7 @@
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
 
-string target = Argument("Target", "Pack");
+string target = Argument("Target", "Validate");
 
 //////////////////////////////////////////////////////////////////////
 // GLOBAL VARIABLES
@@ -133,6 +133,24 @@ Task("Pack")
         };
 
         DotNetCorePack("./Sources/LokiLoggingProvider", settings);
+    });
+
+Task("Validate")
+    .IsDependentOn("Pack")
+    .Does(() =>
+    {
+        FilePathCollection filePaths = GetFiles($"{buildArtifacts}/**/*.nupkg");
+
+        foreach (FilePath filePath in filePaths)
+        {
+            DotNetCoreTool("validate", new DotNetCoreToolSettings
+            {
+                ArgumentCustomization = args => args
+                    .Append("package")
+                    .Append("local")
+                    .Append(filePath.ToString())
+            });
+        }
     });
 
 //////////////////////////////////////////////////////////////////////
