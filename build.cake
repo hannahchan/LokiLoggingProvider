@@ -64,7 +64,9 @@ Task("Build")
         DotNetCoreBuild(solution, new DotNetCoreBuildSettings
         {
             Configuration = configuration,
-            NoRestore = true
+            NoRestore = true,
+            ArgumentCustomization = args => args
+                .Append("-p:ContinuousIntegrationBuild=true")
         });
     });
 
