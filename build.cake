@@ -1,4 +1,10 @@
 //////////////////////////////////////////////////////////////////////
+// ENVIRONMENT VARIABLES
+//////////////////////////////////////////////////////////////////////
+
+Environment.SetEnvironmentVariable("CAKE_BUILD", "true");
+
+//////////////////////////////////////////////////////////////////////
 // ARGUMENTS
 //////////////////////////////////////////////////////////////////////
 
@@ -64,9 +70,7 @@ Task("Build")
         DotNetCoreBuild(solution, new DotNetCoreBuildSettings
         {
             Configuration = configuration,
-            NoRestore = true,
-            ArgumentCustomization = args => args
-                .Append("-p:ContinuousIntegrationBuild=true")
+            NoRestore = true
         });
     });
 

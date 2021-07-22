@@ -14,7 +14,8 @@
     <PackageTags>Grafana;Loki;</PackageTags>
   </PropertyGroup>
 
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(CAKE_BUILD)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
