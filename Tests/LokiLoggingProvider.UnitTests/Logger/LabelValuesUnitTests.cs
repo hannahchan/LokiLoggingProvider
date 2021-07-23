@@ -166,7 +166,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                     },
                     label =>
                     {
-                        Assert.Equal("logLevel", label.Key);
+                        Assert.Equal("level", label.Key);
                         Assert.Equal(logEntry.LogLevel.ToString(), label.Value);
                     });
             }
@@ -209,7 +209,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 {
                     AdditionalStaticLabels = new Dictionary<string, object>
                     {
-                        { "logLevel", "I should be overridden." },
+                        { "level", "I should be overridden." },
                         { "category", "I should be overridden." },
                         { "myLabel", "I not should be overridden." },
                         { "eventId", "I should be overridden." },
@@ -263,7 +263,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                     },
                     label =>
                     {
-                        Assert.Equal("logLevel", label.Key);
+                        Assert.Equal("level", label.Key);
                         Assert.Equal(logEntry.LogLevel.ToString(), label.Value);
                     },
                     label =>
@@ -374,7 +374,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                     },
                     keyValuePair =>
                     {
-                        Assert.Equal("logLevel", keyValuePair.Key);
+                        Assert.Equal("level", keyValuePair.Key);
                         Assert.Equal("SetLogLevel", keyValuePair.Value);
                     });
             }

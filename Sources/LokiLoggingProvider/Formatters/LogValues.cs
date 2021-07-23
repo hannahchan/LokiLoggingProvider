@@ -12,7 +12,7 @@ namespace LokiLoggingProvider.Formatters
 
         public void SetLogLevel(object? value)
         {
-            this["LogLevel"] = value;
+            this["Level"] = value;
         }
 
         public void SetCategory(object? value)

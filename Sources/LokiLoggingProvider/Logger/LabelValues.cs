@@ -84,7 +84,7 @@ namespace LokiLoggingProvider.Logger
 
         public void SetLogLevel(string value)
         {
-            this["logLevel"] = value;
+            this["level"] = value;
         }
 
         public void SetEventId(string value)

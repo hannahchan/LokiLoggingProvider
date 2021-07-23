@@ -33,7 +33,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
+                Assert.Equal("Level=Information Message=\"My Log Message.\"", result);
             }
 
             [Fact]
@@ -59,7 +59,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Category=MyCategory Message=\"My Log Message.\"", result);
+                Assert.Equal("Level=Information Category=MyCategory Message=\"My Log Message.\"", result);
             }
 
             [Fact]
@@ -85,7 +85,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Information EventId=0 Message=\"My Log Message.\"", result);
+                Assert.Equal("Level=Information EventId=0 Message=\"My Log Message.\"", result);
             }
 
             [Fact]
@@ -107,7 +107,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal($"LogLevel=Information Message=\"My Log Message.\" Exception=System.Exception{Environment.NewLine}System.Exception: My Exception.", result);
+                Assert.Equal($"Level=Information Message=\"My Log Message.\" Exception=System.Exception{Environment.NewLine}System.Exception: My Exception.", result);
             }
 
             [Fact]
@@ -133,7 +133,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal($"LogLevel=Information Message=\"My Log Message.\" Exception=System.Exception", result);
+                Assert.Equal($"Level=Information Message=\"My Log Message.\" Exception=System.Exception", result);
             }
 
             [Fact]
@@ -166,7 +166,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Error Message=\"My Log Message.\" key1=123 key2=123.456 key3=True key4=value key5=\"\" key6=\"   \" key7=\"\"", result);
+                Assert.Equal("Level=Error Message=\"My Log Message.\" key1=123 key2=123.456 key3=True key4=value key5=\"\" key6=\"   \" key7=\"\"", result);
             }
 
             [Fact]
@@ -178,7 +178,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
 
                 Dictionary<string, object> state = new Dictionary<string, object>
                 {
-                    { "logLevel", "abc" },
+                    { "level", "abc" },
                     { "Category", "Nothing overridden here." },
                     { "EventId", 123 },
                     { "message", "Another message." },
@@ -196,7 +196,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Error Message=\"My Log Message.\" Category=\"Nothing overridden here.\" EventId=123", result);
+                Assert.Equal("Level=Error Message=\"My Log Message.\" Category=\"Nothing overridden here.\" EventId=123", result);
             }
 
             [Fact]
@@ -220,7 +220,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Error Message=\"My Log Message.\"", result);
+                Assert.Equal("Level=Error Message=\"My Log Message.\"", result);
             }
 
             [Fact]
@@ -263,7 +263,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry, scopeProvider);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\" SomeKey=abc Key1=abc Key2=123", result);
+                Assert.Equal("Level=Information Message=\"My Log Message.\" SomeKey=abc Key1=abc Key2=123", result);
             }
 
             [Fact]
@@ -287,7 +287,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry, scopeProvider);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
+                Assert.Equal("Level=Information Message=\"My Log Message.\"", result);
             }
 
             [Fact]
@@ -309,7 +309,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry, null);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
+                Assert.Equal("Level=Information Message=\"My Log Message.\"", result);
             }
 
             [Fact]
@@ -333,7 +333,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry, scopeProvider);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
+                Assert.Equal("Level=Information Message=\"My Log Message.\"", result);
             }
 
             [Fact]
@@ -355,7 +355,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry, null);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
+                Assert.Equal("Level=Information Message=\"My Log Message.\"", result);
             }
         }
 
@@ -391,7 +391,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.StartsWith("LogLevel=Information Message=\"My Log Message.\" ", result);
+                Assert.StartsWith("Level=Information Message=\"My Log Message.\" ", result);
                 Assert.EndsWith($" SpanId={childActivity.GetSpanId()} TraceId={childActivity.GetTraceId()} ParentId={parentActivity.GetSpanId()}", result);
             }
 
@@ -424,7 +424,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 string result = formatter.Format(logEntry);
 
                 // Assert
-                Assert.Equal("LogLevel=Information Message=\"My Log Message.\"", result);
+                Assert.Equal("Level=Information Message=\"My Log Message.\"", result);
             }
         }
 

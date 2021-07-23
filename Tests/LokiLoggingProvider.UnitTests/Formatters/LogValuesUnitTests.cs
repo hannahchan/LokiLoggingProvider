@@ -26,7 +26,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                 logValues,
                 keyValuePair =>
                 {
-                    Assert.Equal("LogLevel", keyValuePair.Key);
+                    Assert.Equal("Level", keyValuePair.Key);
                     Assert.Equal("SetLogLevel", keyValuePair.Value);
                 },
                 keyValuePair =>
