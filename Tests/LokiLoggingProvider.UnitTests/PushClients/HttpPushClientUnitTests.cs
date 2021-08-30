@@ -48,13 +48,13 @@ namespace LokiLoggingProvider.UnitTests.PushClients
                 HttpPushClient pushClient = new HttpPushClient(httpClient);
 
                 LokiLogEntry entry = new LokiLogEntry(
-                    timestamp: new DateTime(2019, 11, 30, 01, 00, 00, DateTimeKind.Utc),
-                    labels: new LabelValues
+                    Timestamp: new DateTime(2019, 11, 30, 01, 00, 00, DateTimeKind.Utc),
+                    Labels: new LabelValues
                     {
                         { "key1", "value1" },
                         { "key2", "value2" },
                     },
-                    message: "My log message.");
+                    Message: "My log message.");
 
                 // Act
                 pushClient.Push(entry);

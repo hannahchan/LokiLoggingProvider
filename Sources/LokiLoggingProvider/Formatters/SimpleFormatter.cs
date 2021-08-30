@@ -45,7 +45,7 @@ namespace LokiLoggingProvider.Formatters
                 LogLevel.Warning => "WARN",
                 LogLevel.Error => "EROR",
                 LogLevel.Critical => "CRIT",
-                _ => throw new ArgumentOutOfRangeException(nameof(logLevel))
+                _ => throw new ArgumentOutOfRangeException(nameof(logLevel)),
             };
         }
     }
