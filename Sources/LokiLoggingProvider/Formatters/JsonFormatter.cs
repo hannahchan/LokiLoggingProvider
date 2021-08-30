@@ -26,7 +26,7 @@ namespace LokiLoggingProvider.Formatters
 
         public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
         {
-            LogValues logValues = new LogValues();
+            LogValues logValues = new();
             logValues.SetLogLevel(logEntry.LogLevel.ToString());
 
             if (this.formatterOptions.IncludeCategory)
@@ -55,7 +55,7 @@ namespace LokiLoggingProvider.Formatters
 
             if (this.formatterOptions.IncludeScopes && scopeProvider != null)
             {
-                List<object> scopes = new List<object>();
+                List<object> scopes = new();
 
                 scopeProvider.ForEachScope(
                     (scope, state) =>

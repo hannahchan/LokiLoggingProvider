@@ -52,7 +52,7 @@ namespace LokiLoggingProvider.Logger
                 return;
             }
 
-            LogEntry<TState> logEntry = new LogEntry<TState>(logLevel, this.categoryName, eventId, state, exception, formatter);
+            LogEntry<TState> logEntry = new(logLevel, this.categoryName, eventId, state, exception, formatter);
 
             DateTime timestamp = DateTime.UtcNow;
             LabelValues labels = this.staticLabels.AddDynamicLabels(this.dynamicLabelOptions, logEntry);

@@ -14,7 +14,7 @@ namespace LokiLoggingProvider.UnitTests.PushClients
             public void When_DisposingMoreThanOnce_Expect_NoExceptions()
             {
                 // Arrange
-                GrpcPushClient pushClient = new GrpcPushClient(GrpcChannel.ForAddress("http://localhost:9095"));
+                GrpcPushClient pushClient = new(GrpcChannel.ForAddress("http://localhost:9095"));
 
                 // Act
                 Exception result = Record.Exception(() =>
@@ -34,10 +34,10 @@ namespace LokiLoggingProvider.UnitTests.PushClients
             public void When_PushingLogMessageEntryWithDisposedPushClient_Expect_ObjectDisposedException()
             {
                 // Arrange
-                GrpcPushClient pushClient = new GrpcPushClient(GrpcChannel.ForAddress("http://localhost:9095"));
+                GrpcPushClient pushClient = new(GrpcChannel.ForAddress("http://localhost:9095"));
                 pushClient.Dispose();
 
-                LokiLogEntry entry = new LokiLogEntry(default, default, default);
+                LokiLogEntry entry = new(default, default, default);
 
                 // Act
                 Exception result = Record.Exception(() => pushClient.Push(entry));

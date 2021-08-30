@@ -16,7 +16,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             public void When_CreatingLogger_Expect_LoggerCreated()
             {
                 // Arrange
-                LokiLoggerOptions options = new LokiLoggerOptions();
+                LokiLoggerOptions options = new();
                 ILokiLoggerFactory loggerFactory = new GrpcLoggerFactory(
                     options.Grpc,
                     options.StaticLabels,
@@ -36,7 +36,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             public void When_CreatingLoggerWithDisposedLoggerFactory_Expect_ObjectDisposedException()
             {
                 // Arrange
-                LokiLoggerOptions options = new LokiLoggerOptions();
+                LokiLoggerOptions options = new();
                 ILokiLoggerFactory loggerFactory = new GrpcLoggerFactory(
                     options.Grpc,
                     options.StaticLabels,
@@ -62,7 +62,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             public void When_DisposingMoreThanOnce_Expect_NoExceptions()
             {
                 // Arrange
-                LokiLoggerOptions options = new LokiLoggerOptions();
+                LokiLoggerOptions options = new();
                 ILokiLoggerFactory loggerFactory = new GrpcLoggerFactory(
                     options.Grpc,
                     options.StaticLabels,
@@ -87,7 +87,7 @@ namespace LokiLoggingProvider.UnitTests.LoggerFactories
             public void When_SettingScopeProvider_Expect_ScopeProviderSet()
             {
                 // Arrange
-                LokiLoggerOptions options = new LokiLoggerOptions();
+                LokiLoggerOptions options = new();
                 ILokiLoggerFactory loggerFactory = new GrpcLoggerFactory(
                     options.Grpc,
                     options.StaticLabels,

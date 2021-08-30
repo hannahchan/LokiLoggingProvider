@@ -19,10 +19,10 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 string categoryName = nameof(categoryName);
                 ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
                 ILokiLogEntryProcessor processor = new MockLogEntryProcessor();
-                LokiLoggerOptions options = new LokiLoggerOptions();
-                MockScopeProvider scopeProvider = new MockScopeProvider();
+                LokiLoggerOptions options = new();
+                MockScopeProvider scopeProvider = new();
 
-                LokiLogger logger = new LokiLogger(
+                LokiLogger logger = new(
                     categoryName,
                     formatter,
                     processor,
@@ -76,9 +76,9 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 string categoryName = nameof(categoryName);
                 ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
                 ILokiLogEntryProcessor processor = new MockLogEntryProcessor();
-                LokiLoggerOptions options = new LokiLoggerOptions();
+                LokiLoggerOptions options = new();
 
-                LokiLogger logger = new LokiLogger(
+                LokiLogger logger = new(
                     categoryName,
                     formatter,
                     processor,
@@ -101,10 +101,10 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 // Arrange
                 string categoryName = nameof(categoryName);
                 ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
-                MockLogEntryProcessor processor = new MockLogEntryProcessor();
-                LokiLoggerOptions options = new LokiLoggerOptions();
+                MockLogEntryProcessor processor = new();
+                LokiLoggerOptions options = new();
 
-                LokiLogger logger = new LokiLogger(
+                LokiLogger logger = new(
                     categoryName,
                     formatter,
                     processor,
@@ -129,10 +129,10 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 // Arrange
                 string categoryName = nameof(categoryName);
                 ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
-                MockLogEntryProcessor processor = new MockLogEntryProcessor();
-                LokiLoggerOptions options = new LokiLoggerOptions();
+                MockLogEntryProcessor processor = new();
+                LokiLoggerOptions options = new();
 
-                LokiLogger logger = new LokiLogger(
+                LokiLogger logger = new(
                     categoryName,
                     formatter,
                     processor,

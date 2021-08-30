@@ -42,7 +42,7 @@ namespace LokiLoggingProvider.Logger
 
         public LabelValues AddDynamicLabels<TState>(DynamicLabelOptions options, LogEntry<TState> logEntry)
         {
-            LabelValues labelValues = new LabelValues(this);
+            LabelValues labelValues = new(this);
 
             if (options.IncludeCategory)
             {

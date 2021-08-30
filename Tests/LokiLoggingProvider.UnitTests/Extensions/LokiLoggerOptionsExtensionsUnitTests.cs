@@ -19,7 +19,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             public void When_CreatingFormatter_Expect_Formatter(Formatter formatter, Type expectedType)
             {
                 // Arrange
-                LokiLoggerOptions options = new LokiLoggerOptions { Formatter = formatter };
+                LokiLoggerOptions options = new() { Formatter = formatter };
 
                 // Act
                 ILogEntryFormatter result = options.CreateFormatter();
@@ -39,7 +39,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             public void When_CreatingLoggerFactory_Expect_LoggerFactory(PushClient client, Type expectedType)
             {
                 // Arrange
-                LokiLoggerOptions options = new LokiLoggerOptions { Client = client };
+                LokiLoggerOptions options = new() { Client = client };
 
                 // Act
                 ILokiLoggerFactory result = options.CreateLoggerFactory();

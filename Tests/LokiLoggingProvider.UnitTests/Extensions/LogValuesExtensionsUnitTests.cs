@@ -14,10 +14,10 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             public void When_AddingActivityTracking_Expect_ActivityTrackingAdded()
             {
                 // Arrange
-                LogValues logValues = new LogValues();
+                LogValues logValues = new();
 
-                using Activity parentActivity = new Activity(nameof(parentActivity));
-                using Activity childActivity = new Activity(nameof(parentActivity));
+                using Activity parentActivity = new(nameof(parentActivity));
+                using Activity childActivity = new(nameof(parentActivity));
 
                 // Act
                 parentActivity.Start();
@@ -49,7 +49,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             public void When_AddingActivityTracking_Expect_ActivityTrackingNotAdded()
             {
                 // Arrange
-                LogValues logValues = new LogValues();
+                LogValues logValues = new();
 
                 // Act
                 logValues.AddActivityTracking();
@@ -62,14 +62,14 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             public void When_AddingActivityTrackingToDictionaryWithExistingKeys_Expect_NoOverrides()
             {
                 // Arrange
-                LogValues logValues = new LogValues
+                LogValues logValues = new()
                 {
                     ["SpanId"] = "SpanId",
                     ["TraceId"] = "TraceId",
                     ["ParentId"] = "ParentId",
                 };
 
-                using Activity activity = new Activity(nameof(activity));
+                using Activity activity = new(nameof(activity));
 
                 // Act
                 activity.Start();

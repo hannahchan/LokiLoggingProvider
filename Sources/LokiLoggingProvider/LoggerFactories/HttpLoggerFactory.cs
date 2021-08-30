@@ -12,7 +12,7 @@ namespace LokiLoggingProvider.LoggerFactories
 
     internal sealed class HttpLoggerFactory : ILokiLoggerFactory
     {
-        private readonly ConcurrentDictionary<string, LokiLogger> loggers = new ConcurrentDictionary<string, LokiLogger>();
+        private readonly ConcurrentDictionary<string, LokiLogger> loggers = new();
 
         private readonly ILogEntryFormatter formatter;
 
@@ -32,12 +32,12 @@ namespace LokiLoggingProvider.LoggerFactories
             DynamicLabelOptions dynamicLabelOptions,
             ILogEntryFormatter formatter)
         {
-            HttpClient httpClient = new HttpClient
+            HttpClient httpClient = new()
             {
                 BaseAddress = new Uri(httpOptions.Address),
             };
 
-            HttpPushClient pushClient = new HttpPushClient(httpClient);
+            HttpPushClient pushClient = new(httpClient);
             this.processor = new LokiLogEntryProcessor(pushClient);
 
             this.staticLabelOptions = staticLabelOptions;

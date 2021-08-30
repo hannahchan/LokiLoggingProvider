@@ -59,10 +59,10 @@ namespace LokiLoggingProvider.PushClients
                 },
             };
 
-            StringContent content = new StringContent(JsonSerializer.Serialize(requestBody), null, MediaTypeNames.Application.Json);
+            StringContent content = new(JsonSerializer.Serialize(requestBody), null, MediaTypeNames.Application.Json);
             content.Headers.ContentType!.CharSet = null; // Loki does not accept 'charset' in the Content-Type header
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, PushEndpointV1)
+            HttpRequestMessage request = new(HttpMethod.Post, PushEndpointV1)
             {
                 Content = content,
             };

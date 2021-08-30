@@ -16,8 +16,8 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_Disposed_Expext_MessageQueueIsCompleted()
             {
                 // Arrange
-                MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
+                MockLokiPushClient client = new();
+                LokiLogEntryProcessor processor = new(client);
 
                 // Act
                 processor.Dispose();
@@ -30,8 +30,8 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_DisposingMoreThanOnce_Expect_NoExceptions()
             {
                 // Arrange
-                MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
+                MockLokiPushClient client = new();
+                LokiLogEntryProcessor processor = new(client);
 
                 // Act
                 Exception resul = Record.Exception(() =>
@@ -51,10 +51,10 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public async Task When_EnqueuingMessage_Expect_MessageProcessed()
             {
                 // Arrange
-                MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
+                MockLokiPushClient client = new();
+                LokiLogEntryProcessor processor = new(client);
 
-                LokiLogEntry message = new LokiLogEntry(default, default, nameof(LokiLogEntry.Message));
+                LokiLogEntry message = new(default, default, nameof(LokiLogEntry.Message));
 
                 // Act
                 processor.EnqueueMessage(message);
@@ -74,11 +74,11 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public async Task When_EnqueuingMessageAndMessageQueueIsCompleted_Expect_NoMessageProcessed()
             {
                 // Arrange
-                MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
+                MockLokiPushClient client = new();
+                LokiLogEntryProcessor processor = new(client);
                 processor.MessageQueue.CompleteAdding();
 
-                LokiLogEntry message = new LokiLogEntry(default, default, nameof(LokiLogEntry.Message));
+                LokiLogEntry message = new(default, default, nameof(LokiLogEntry.Message));
 
                 // Act
                 processor.EnqueueMessage(message);
@@ -98,11 +98,11 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_EnqueuingMessageWithDisposedLogMessageEntryProcessor_Expect_ObjectDisposedException()
             {
                 // Arrange
-                MockLokiPushClient client = new MockLokiPushClient();
-                LokiLogEntryProcessor processor = new LokiLogEntryProcessor(client);
+                MockLokiPushClient client = new();
+                LokiLogEntryProcessor processor = new(client);
                 processor.Dispose();
 
-                LokiLogEntry message = new LokiLogEntry(default, default, nameof(LokiLogEntry.Message));
+                LokiLogEntry message = new(default, default, nameof(LokiLogEntry.Message));
 
                 // Act
                 Exception result = Record.Exception(() => processor.EnqueueMessage(message));

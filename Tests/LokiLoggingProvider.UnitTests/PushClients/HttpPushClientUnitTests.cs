@@ -18,7 +18,7 @@ namespace LokiLoggingProvider.UnitTests.PushClients
             public void When_DisposingMoreThanOnce_Expect_NoExceptions()
             {
                 // Arrange
-                HttpPushClient pushClient = new HttpPushClient(new HttpClient());
+                HttpPushClient pushClient = new(new HttpClient());
 
                 // Act
                 Exception result = Record.Exception(() =>
@@ -38,16 +38,16 @@ namespace LokiLoggingProvider.UnitTests.PushClients
             public void When_PushingLogMessageEntry_Expect_HttpRequestMessage()
             {
                 // Arrange
-                HttpRequestHandler requestHandler = new HttpRequestHandler();
+                HttpRequestHandler requestHandler = new();
 
-                HttpClient httpClient = new HttpClient(requestHandler)
+                HttpClient httpClient = new(requestHandler)
                 {
                     BaseAddress = new Uri("http://localhost:3100"),
                 };
 
-                HttpPushClient pushClient = new HttpPushClient(httpClient);
+                HttpPushClient pushClient = new(httpClient);
 
-                LokiLogEntry entry = new LokiLogEntry(
+                LokiLogEntry entry = new(
                     Timestamp: new DateTime(2019, 11, 30, 01, 00, 00, DateTimeKind.Utc),
                     Labels: new LabelValues
                     {
@@ -78,10 +78,10 @@ namespace LokiLoggingProvider.UnitTests.PushClients
             public void When_PushingLogMessageEntryWithDisposedPushClient_Expect_ObjectDisposedException()
             {
                 // Arrange
-                HttpPushClient pushClient = new HttpPushClient(new HttpClient());
+                HttpPushClient pushClient = new(new HttpClient());
                 pushClient.Dispose();
 
-                LokiLogEntry entry = new LokiLogEntry(default, default, default);
+                LokiLogEntry entry = new(default, default, default);
 
                 // Act
                 Exception result = Record.Exception(() => pushClient.Push(entry));

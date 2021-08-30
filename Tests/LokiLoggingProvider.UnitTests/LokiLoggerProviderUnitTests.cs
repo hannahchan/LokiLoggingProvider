@@ -16,7 +16,7 @@ namespace LokiLoggingProvider.UnitTests
             public void When_CreatingLogger_Expect_LoggerCreated()
             {
                 // Arrange
-                MockOptionsMonitor options = new MockOptionsMonitor(new LokiLoggerOptions());
+                MockOptionsMonitor options = new(new LokiLoggerOptions());
                 ILoggerProvider loggerProvider = new LokiLoggerProvider(options);
 
                 string categoryName = nameof(categoryName);
@@ -32,7 +32,7 @@ namespace LokiLoggingProvider.UnitTests
             public void When_CreatingLoggerWithDisposedLoggerProvider_Expect_ObjectDisposedException()
             {
                 // Arrange
-                MockOptionsMonitor options = new MockOptionsMonitor(new LokiLoggerOptions());
+                MockOptionsMonitor options = new(new LokiLoggerOptions());
                 ILoggerProvider loggerProvider = new LokiLoggerProvider(options);
                 loggerProvider.Dispose();
 
@@ -53,8 +53,8 @@ namespace LokiLoggingProvider.UnitTests
             public void When_DisposingMoreThanOnce_Expect_NoExceptions()
             {
                 // Arrange
-                MockOptionsMonitor options = new MockOptionsMonitor(new LokiLoggerOptions());
-                LokiLoggerProvider loggerProvider = new LokiLoggerProvider(options);
+                MockOptionsMonitor options = new(new LokiLoggerOptions());
+                LokiLoggerProvider loggerProvider = new(options);
 
                 // Act
                 Exception result = Record.Exception(() =>
@@ -76,7 +76,7 @@ namespace LokiLoggingProvider.UnitTests
             public void When_SettingScopeProvider_Expect_ScopeProviderSet(PushClient client)
             {
                 // Arrange
-                MockOptionsMonitor options = new MockOptionsMonitor(new LokiLoggerOptions { Client = client });
+                MockOptionsMonitor options = new(new LokiLoggerOptions { Client = client });
                 ILoggerProvider loggerProvider = new LokiLoggerProvider(options);
 
                 string categoryName = nameof(categoryName);
@@ -96,11 +96,11 @@ namespace LokiLoggingProvider.UnitTests
             public void When_UpdatingOptions_Expect_UpdatedLogger()
             {
                 // Arrange
-                LokiLoggerOptions originalOptions = new LokiLoggerOptions { Client = PushClient.None };
-                LokiLoggerOptions updatedOptions = new LokiLoggerOptions { Client = PushClient.Grpc };
+                LokiLoggerOptions originalOptions = new() { Client = PushClient.None };
+                LokiLoggerOptions updatedOptions = new() { Client = PushClient.Grpc };
 
-                MockOptionsMonitor optionsMonitor = new MockOptionsMonitor(originalOptions);
-                LokiLoggerProvider loggerProvider = new LokiLoggerProvider(optionsMonitor);
+                MockOptionsMonitor optionsMonitor = new(originalOptions);
+                LokiLoggerProvider loggerProvider = new(optionsMonitor);
 
                 string categoryName = nameof(categoryName);
 

@@ -16,7 +16,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_ConstructingLabelValuesWithStaticLabelOptions_Expect_LabelValues()
             {
                 // Arrange
-                StaticLabelOptions options = new StaticLabelOptions
+                StaticLabelOptions options = new()
                 {
                     JobName = nameof(StaticLabelOptions.JobName),
                     IncludeInstanceLabel = true,
@@ -32,7 +32,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 };
 
                 // Act
-                LabelValues result = new LabelValues(options);
+                LabelValues result = new(options);
 
                 // Assert
                 Assert.Collection(
@@ -68,7 +68,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_ConstructingLabelValuesWithStaticLabelOptionsWithOnlyAdditionalStaticLabels_Expect_LabelValues()
             {
                 // Arrange
-                StaticLabelOptions options = new StaticLabelOptions
+                StaticLabelOptions options = new()
                 {
                     JobName = string.Empty,
                     IncludeInstanceLabel = false,
@@ -80,7 +80,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 };
 
                 // Act
-                LabelValues result = new LabelValues(options);
+                LabelValues result = new(options);
 
                 // Assert
                 Assert.Collection(
@@ -101,7 +101,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_ConstructingLabelValuesWithStaticLabelOptions_Expect_EmptyLabelValues()
             {
                 // Arrange
-                StaticLabelOptions options = new StaticLabelOptions
+                StaticLabelOptions options = new()
                 {
                     JobName = string.Empty,
                     IncludeInstanceLabel = false,
@@ -109,7 +109,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                 };
 
                 // Act
-                LabelValues result = new LabelValues(options);
+                LabelValues result = new(options);
 
                 // Assert
                 Assert.Empty(result);
@@ -122,9 +122,9 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_AddingDynamicLabels_Expect_DynamicLabels()
             {
                 // Arrange
-                LabelValues labelValues = new LabelValues();
+                LabelValues labelValues = new();
 
-                DynamicLabelOptions options = new DynamicLabelOptions
+                DynamicLabelOptions options = new()
                 {
                     IncludeCategory = true,
                     IncludeLogLevel = true,
@@ -132,7 +132,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                     IncludeException = true,
                 };
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Warning,
                     category: "MyCategory",
                     eventId: default,
@@ -175,9 +175,9 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_AddingDynamicLabels_Expect_NoDynamicLabels()
             {
                 // Arrange
-                LabelValues labelValues = new LabelValues();
+                LabelValues labelValues = new();
 
-                DynamicLabelOptions options = new DynamicLabelOptions
+                DynamicLabelOptions options = new()
                 {
                     IncludeCategory = false,
                     IncludeLogLevel = false,
@@ -185,7 +185,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                     IncludeException = false,
                 };
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Warning,
                     category: "MyCategory",
                     eventId: default,
@@ -205,7 +205,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_AddingDynamicLabels_Expect_DynamicLabelsToOverrideStaticLabels()
             {
                 // Arrange
-                LabelValues labelValues = new LabelValues(new StaticLabelOptions
+                LabelValues labelValues = new(new StaticLabelOptions
                 {
                     AdditionalStaticLabels = new Dictionary<string, object>
                     {
@@ -217,7 +217,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                     },
                 });
 
-                DynamicLabelOptions options = new DynamicLabelOptions
+                DynamicLabelOptions options = new()
                 {
                     IncludeCategory = true,
                     IncludeLogLevel = true,
@@ -225,7 +225,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
                     IncludeException = true,
                 };
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Warning,
                     category: "MyCategory",
                     eventId: default,
@@ -277,14 +277,14 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_AddingDynamicLabelsIncludingExceptionWithNullException_Expect_NoDynamicLabels()
             {
                 // Arrange
-                LabelValues labelValues = new LabelValues();
+                LabelValues labelValues = new();
 
-                DynamicLabelOptions options = new DynamicLabelOptions
+                DynamicLabelOptions options = new()
                 {
                     IncludeException = true,
                 };
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Warning,
                     category: "MyCategory",
                     eventId: default,
@@ -304,14 +304,14 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_AddingDynamicLabelsNotIncludingExceptionWithNullException_Expect_NoDynamicLabels()
             {
                 // Arrange
-                LabelValues labelValues = new LabelValues();
+                LabelValues labelValues = new();
 
-                DynamicLabelOptions options = new DynamicLabelOptions
+                DynamicLabelOptions options = new()
                 {
                     IncludeException = false,
                 };
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Warning,
                     category: "MyCategory",
                     eventId: default,
@@ -334,7 +334,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_SettingLabelValues_Expect_ValuesSet()
             {
                 // Arrange
-                LabelValues labelValues = new LabelValues();
+                LabelValues labelValues = new();
 
                 // Act
                 labelValues.SetJob(nameof(labelValues.SetJob));
@@ -386,7 +386,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_CallingToString_Expect_LabelString()
             {
                 // Arrange
-                LabelValues labelValues = new LabelValues
+                LabelValues labelValues = new()
                 {
                     { "MyString", "abc" },
                     { "MyInteger", "123" },
@@ -405,7 +405,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             public void When_CallingToStringWithEmptyLabelValues_Expect_EmptyString()
             {
                 // Arrange
-                LabelValues labelValues = new LabelValues();
+                LabelValues labelValues = new();
 
                 // Act
                 string result = labelValues.ToString();

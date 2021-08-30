@@ -12,7 +12,7 @@ namespace LokiLoggingProvider.LoggerFactories
 
     internal sealed class GrpcLoggerFactory : ILokiLoggerFactory
     {
-        private readonly ConcurrentDictionary<string, LokiLogger> loggers = new ConcurrentDictionary<string, LokiLogger>();
+        private readonly ConcurrentDictionary<string, LokiLogger> loggers = new();
 
         private readonly ILogEntryFormatter formatter;
 
@@ -33,7 +33,7 @@ namespace LokiLoggingProvider.LoggerFactories
             ILogEntryFormatter formatter)
         {
             GrpcChannel channel = GrpcChannel.ForAddress(grpcOptions.Address);
-            GrpcPushClient grpcClient = new GrpcPushClient(channel);
+            GrpcPushClient grpcClient = new(channel);
             this.processor = new LokiLogEntryProcessor(grpcClient);
 
             this.staticLabelOptions = staticLabelOptions;

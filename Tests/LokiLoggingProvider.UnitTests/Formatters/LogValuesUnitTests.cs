@@ -9,7 +9,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
         public void When_SettingLogValues_Expect_ValuesSet()
         {
             // Arrange
-            LogValues logValues = new LogValues();
+            LogValues logValues = new();
 
             // Act
             logValues.SetLogLevel(nameof(logValues.SetLogLevel));

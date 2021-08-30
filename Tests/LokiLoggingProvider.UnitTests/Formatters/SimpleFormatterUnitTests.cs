@@ -23,10 +23,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntry_Expect_Message(LogLevel logLevel, string logLevelString)
             {
                 // Arrange
-                SimpleFormatterOptions options = new SimpleFormatterOptions();
-                SimpleFormatter formatter = new SimpleFormatter(options);
+                SimpleFormatterOptions options = new();
+                SimpleFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: logLevel,
                     category: default,
                     eventId: default,
@@ -45,10 +45,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntry_Expect_ArgumentOutOfRangeException()
             {
                 // Arrange
-                SimpleFormatterOptions options = new SimpleFormatterOptions();
-                SimpleFormatter formatter = new SimpleFormatter(options);
+                SimpleFormatterOptions options = new();
+                SimpleFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.None,
                     category: default,
                     eventId: default,
@@ -68,14 +68,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryIncludingActivityTrackingWithActivity_Expect_MessageWithActivityTracking()
             {
                 // Arrange
-                SimpleFormatterOptions options = new SimpleFormatterOptions
+                SimpleFormatterOptions options = new()
                 {
                     IncludeActivityTracking = true,
                 };
 
-                SimpleFormatter formatter = new SimpleFormatter(options);
+                SimpleFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: default,
                     eventId: default,
@@ -83,7 +83,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                     exception: null,
                     formatter: (state, exception) => state.ToString());
 
-                using Activity activity = new Activity(nameof(activity));
+                using Activity activity = new(nameof(activity));
 
                 // Act
                 activity.Start();
@@ -98,14 +98,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryIncludingActivityTrackingWithNullActivity_Expect_MessageWithNoActivityTracking()
             {
                 // Arrange
-                SimpleFormatterOptions options = new SimpleFormatterOptions
+                SimpleFormatterOptions options = new()
                 {
                     IncludeActivityTracking = true,
                 };
 
-                SimpleFormatter formatter = new SimpleFormatter(options);
+                SimpleFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: default,
                     eventId: default,
@@ -124,10 +124,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryWithException_Expect_Message()
             {
                 // Arrange
-                SimpleFormatterOptions options = new SimpleFormatterOptions();
-                SimpleFormatter formatter = new SimpleFormatter(options);
+                SimpleFormatterOptions options = new();
+                SimpleFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Error,
                     category: default,
                     eventId: default,
@@ -150,14 +150,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryNotIncludingActivityTrackingWithActivity_Expect_MessageWithNoActivityTracking()
             {
                 // Arrange
-                SimpleFormatterOptions options = new SimpleFormatterOptions
+                SimpleFormatterOptions options = new()
                 {
                     IncludeActivityTracking = false,
                 };
 
-                SimpleFormatter formatter = new SimpleFormatter(options);
+                SimpleFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: default,
                     eventId: default,
@@ -165,7 +165,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                     exception: null,
                     formatter: (state, exception) => state.ToString());
 
-                using Activity activity = new Activity(nameof(activity));
+                using Activity activity = new(nameof(activity));
 
                 // Act
                 activity.Start();
@@ -180,14 +180,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryNotIncludingActivityTrackingWithNullActivity_Expect_MessageWithNoActivityTracking()
             {
                 // Arrange
-                SimpleFormatterOptions options = new SimpleFormatterOptions
+                SimpleFormatterOptions options = new()
                 {
                     IncludeActivityTracking = false,
                 };
 
-                SimpleFormatter formatter = new SimpleFormatter(options);
+                SimpleFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: default,
                     eventId: default,

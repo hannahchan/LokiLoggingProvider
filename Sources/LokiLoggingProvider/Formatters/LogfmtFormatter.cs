@@ -19,7 +19,7 @@ namespace LokiLoggingProvider.Formatters
 
         public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
         {
-            LogValues logValues = new LogValues();
+            LogValues logValues = new();
             logValues.SetLogLevel(logEntry.LogLevel.ToString());
 
             if (this.formatterOptions.IncludeCategory)

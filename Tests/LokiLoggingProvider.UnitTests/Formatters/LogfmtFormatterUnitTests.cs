@@ -18,10 +18,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntry_Expect_DefaultMessage()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new();
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -40,14 +40,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryIncludingCategory_Expect_MessageWithCategory()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
+                LogfmtFormatterOptions options = new()
                 {
                     IncludeCategory = true,
                 };
 
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -66,14 +66,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryIncludingEventId_Expect_MessageWithEventId()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
+                LogfmtFormatterOptions options = new()
                 {
                     IncludeEventId = true,
                 };
 
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -92,10 +92,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryWithException_Expect_MessageWithExceptionPrinted()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new();
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -114,14 +114,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryWithException_Expect_MessageWithExceptionNotPrinted()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
+                LogfmtFormatterOptions options = new()
                 {
                     PrintExceptions = false,
                 };
 
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -140,10 +140,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryWithEnumerableState_Expect_MessageWithStateKeyValues()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new();
+                LogfmtFormatter formatter = new(options);
 
-                Dictionary<string, object> state = new Dictionary<string, object>
+                Dictionary<string, object> state = new()
                 {
                     { "key1", 123 },
                     { "key2", 123.456 },
@@ -154,7 +154,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                     { "key7", null },
                 };
 
-                LogEntry<Dictionary<string, object>> logEntry = new LogEntry<Dictionary<string, object>>(
+                LogEntry<Dictionary<string, object>> logEntry = new(
                     logLevel: LogLevel.Error,
                     category: default,
                     eventId: default,
@@ -173,10 +173,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryWithEnumerableState_Expect_MessageWithNoOverriddenKeys()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new();
+                LogfmtFormatter formatter = new(options);
 
-                Dictionary<string, object> state = new Dictionary<string, object>
+                Dictionary<string, object> state = new()
                 {
                     { "level", "abc" },
                     { "Category", "Nothing overridden here." },
@@ -184,7 +184,7 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                     { "message", "Another message." },
                 };
 
-                LogEntry<Dictionary<string, object>> logEntry = new LogEntry<Dictionary<string, object>>(
+                LogEntry<Dictionary<string, object>> logEntry = new(
                     logLevel: LogLevel.Error,
                     category: default,
                     eventId: default,
@@ -203,12 +203,12 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryWithNonEnumerableState_Expect_MessageWithoutState()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions();
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new();
+                LogfmtFormatter formatter = new(options);
 
                 string state = "My State.";
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Error,
                     category: default,
                     eventId: default,
@@ -227,10 +227,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryIncludingScopeWithScopeProvider_Expect_MessageWithScopes()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions { IncludeScopes = true };
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new() { IncludeScopes = true };
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -270,10 +270,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryIncludingScopeWithScopeProvider_Expect_MessageWithoutScopes()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions { IncludeScopes = true };
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new() { IncludeScopes = true };
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -294,10 +294,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryIncludingScopeWithNullScopeProvider_Expect_MessageWithoutScopes()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions { IncludeScopes = true };
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new() { IncludeScopes = true };
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -316,10 +316,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryNotIncludingScopeWithScopeProvider_Expect_MessageWithoutScopes()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions { IncludeScopes = false };
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new() { IncludeScopes = false };
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -340,10 +340,10 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryNotIncludingScopeWithNullScopeProvider_Expect_MessageWithoutScopes()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions { IncludeScopes = false };
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatterOptions options = new() { IncludeScopes = false };
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -366,14 +366,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryIncludingActivityTracking_Expect_MessageWithActivityTracking()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
+                LogfmtFormatterOptions options = new()
                 {
                     IncludeActivityTracking = true,
                 };
 
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -381,8 +381,8 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                     exception: null,
                     formatter: (state, exception) => state.ToString());
 
-                using Activity parentActivity = new Activity(nameof(parentActivity));
-                using Activity childActivity = new Activity(nameof(childActivity));
+                using Activity parentActivity = new(nameof(parentActivity));
+                using Activity childActivity = new(nameof(childActivity));
 
                 // Act
                 parentActivity.Start();
@@ -399,14 +399,14 @@ namespace LokiLoggingProvider.UnitTests.Formatters
             public void When_FormattingLogEntryNotIncludingActivityTracking_Expect_MessageWithNoActivityTracking()
             {
                 // Arrange
-                LogfmtFormatterOptions options = new LogfmtFormatterOptions
+                LogfmtFormatterOptions options = new()
                 {
                     IncludeActivityTracking = false,
                 };
 
-                LogfmtFormatter formatter = new LogfmtFormatter(options);
+                LogfmtFormatter formatter = new(options);
 
-                LogEntry<string> logEntry = new LogEntry<string>(
+                LogEntry<string> logEntry = new(
                     logLevel: LogLevel.Information,
                     category: "MyCategory",
                     eventId: default,
@@ -414,8 +414,8 @@ namespace LokiLoggingProvider.UnitTests.Formatters
                     exception: null,
                     formatter: (state, exception) => state.ToString());
 
-                using Activity parentActivity = new Activity(nameof(parentActivity));
-                using Activity childActivity = new Activity(nameof(childActivity));
+                using Activity parentActivity = new(nameof(parentActivity));
+                using Activity childActivity = new(nameof(childActivity));
 
                 // Act
                 parentActivity.Start();

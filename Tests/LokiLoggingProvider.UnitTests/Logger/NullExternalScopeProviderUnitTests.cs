@@ -14,7 +14,7 @@ namespace LokiLoggingProvider.UnitTests.Logger
             NullExternalScopeProvider scopeProvider = NullExternalScopeProvider.Instance;
 
             static void Callback(object scope, List<object> state) => state.Add(scope);
-            List<object> scopes = new List<object>();
+            List<object> scopes = new();
 
             // Act
             scopeProvider.ForEachScope(Callback, scopes);

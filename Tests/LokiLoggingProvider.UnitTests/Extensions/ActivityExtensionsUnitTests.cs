@@ -15,7 +15,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
                 // Arrange
                 Activity.DefaultIdFormat = ActivityIdFormat.Hierarchical;
 
-                using Activity activity = new Activity(nameof(activity));
+                using Activity activity = new(nameof(activity));
 
                 // Act
                 activity.Start();
@@ -32,7 +32,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
                 // Arrange
                 Activity.DefaultIdFormat = ActivityIdFormat.W3C;
 
-                using Activity activity = new Activity(nameof(activity));
+                using Activity activity = new(nameof(activity));
 
                 // Act
                 activity.Start();
@@ -47,7 +47,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             public void When_GettingSpanIdWithNotStartedActivity_Expect_Null()
             {
                 // Arrange
-                Activity activity = new Activity(nameof(activity));
+                Activity activity = new(nameof(activity));
 
                 // Act
                 string result = activity.GetSpanId();
@@ -66,7 +66,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
                 // Arrange
                 Activity.DefaultIdFormat = ActivityIdFormat.Hierarchical;
 
-                using Activity activity = new Activity(nameof(activity));
+                using Activity activity = new(nameof(activity));
 
                 // Act
                 activity.Start();
@@ -83,7 +83,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
                 // Arrange
                 Activity.DefaultIdFormat = ActivityIdFormat.W3C;
 
-                using Activity activity = new Activity(nameof(activity));
+                using Activity activity = new(nameof(activity));
 
                 // Act
                 activity.Start();
@@ -98,7 +98,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             public void When_GettingTraceIdWithNotStartedActivity_Expect_Null()
             {
                 // Arrange
-                Activity activity = new Activity(nameof(activity));
+                Activity activity = new(nameof(activity));
 
                 // Act
                 string result = activity.GetTraceId();
@@ -117,8 +117,8 @@ namespace LokiLoggingProvider.UnitTests.Extensions
                 // Arrange
                 Activity.DefaultIdFormat = ActivityIdFormat.Hierarchical;
 
-                using Activity parentActivity = new Activity(nameof(parentActivity));
-                using Activity childActivity = new Activity(nameof(childActivity));
+                using Activity parentActivity = new(nameof(parentActivity));
+                using Activity childActivity = new(nameof(childActivity));
 
                 // Act
                 parentActivity.Start();
@@ -137,8 +137,8 @@ namespace LokiLoggingProvider.UnitTests.Extensions
                 // Arrange
                 Activity.DefaultIdFormat = ActivityIdFormat.W3C;
 
-                using Activity parentActivity = new Activity(nameof(parentActivity));
-                using Activity childActivity = new Activity(nameof(childActivity));
+                using Activity parentActivity = new(nameof(parentActivity));
+                using Activity childActivity = new(nameof(childActivity));
 
                 // Act
                 parentActivity.Start();
@@ -155,7 +155,7 @@ namespace LokiLoggingProvider.UnitTests.Extensions
             public void When_GettingParentIdWithNotStartedActivity_Expect_Null()
             {
                 // Arrange
-                Activity activity = new Activity(nameof(activity));
+                Activity activity = new(nameof(activity));
 
                 // Act
                 string result = activity.GetParentId();

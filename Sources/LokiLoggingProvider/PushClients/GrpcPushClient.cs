@@ -38,7 +38,7 @@ namespace LokiLoggingProvider.PushClients
                 throw new ObjectDisposedException(nameof(GrpcPushClient));
             }
 
-            StreamAdapter stream = new StreamAdapter
+            StreamAdapter stream = new()
             {
                 Labels = $"{{{entry.Labels}}}",
             };
@@ -49,7 +49,7 @@ namespace LokiLoggingProvider.PushClients
                 Line = entry.Message,
             });
 
-            PushRequest request = new PushRequest();
+            PushRequest request = new();
             request.Streams.Add(stream);
 
             this.client.Push(request);
