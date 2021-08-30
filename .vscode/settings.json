@@ -3,5 +3,6 @@
     "**/bin": true,
     "**/obj": true
   },
+  "omnisharp.enableEditorConfigSupport": true,
   "omnisharp.enableRoslynAnalyzers": true
 }
