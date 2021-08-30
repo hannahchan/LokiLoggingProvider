@@ -145,7 +145,7 @@ Task("Validate")
     .IsDependentOn("Pack")
     .Does(() =>
     {
-        FilePathCollection filePaths = GetFiles($"{buildArtifacts}/**/*.nupkg");
+        FilePathCollection filePaths = GetFiles($"{buildArtifacts}/**/*.(nupkg|snupkg)");
 
         foreach (FilePath filePath in filePaths)
         {
