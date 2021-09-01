@@ -12,6 +12,8 @@
     <PackageProjectUrl>https://github.com/hannahchan/LokiLoggingProvider</PackageProjectUrl>
     <Description>Send logs to Grafana Loki.</Description>
     <PackageTags>Grafana;Loki;</PackageTags>
+    <!-- See GitHub Issue https://github.com/NuGet/Home/issues/10791 -->
+    <!-- <PackageReadmeFile>README.md</PackageReadmeFile> -->
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(CAKE_BUILD)' == 'true'">
@@ -37,6 +39,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
+
   <ItemGroup>
     <Protobuf Include="Protos/github.com/gogo/protobuf/gogoproto/gogo.proto" GrpcServices="None">
       <SourceUrl>https://raw.githubusercontent.com/gogo/protobuf/master/gogoproto/gogo.proto</SourceUrl>
@@ -44,5 +47,9 @@
     <Protobuf Include="Protos/github.com/grafana/loki/pkg/logproto/logproto.proto" GrpcServices="Client" AdditionalImportDirs="Protos">
       <SourceUrl>https://raw.githubusercontent.com/grafana/loki/main/pkg/logproto/logproto.proto</SourceUrl>
     </Protobuf>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 </Project>
