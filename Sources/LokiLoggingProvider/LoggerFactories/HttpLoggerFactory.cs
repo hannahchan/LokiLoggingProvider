@@ -4,6 +4,8 @@ namespace LokiLoggingProvider.LoggerFactories
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Text;
     using LokiLoggingProvider.Formatters;
     using LokiLoggingProvider.Logger;
     using LokiLoggingProvider.Options;
@@ -36,6 +38,12 @@ namespace LokiLoggingProvider.LoggerFactories
             {
                 BaseAddress = new Uri(httpOptions.Address),
             };
+
+            if (!string.IsNullOrEmpty(httpOptions.User) && !string.IsNullOrEmpty(httpOptions.Password))
+            {
+                byte[] credentials = Encoding.ASCII.GetBytes($"{httpOptions.User}:{httpOptions.Password}");
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(credentials));
+            }
 
             HttpPushClient pushClient = new(httpClient);
             this.processor = new LokiLogEntryProcessor(pushClient);
