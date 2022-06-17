@@ -16,7 +16,14 @@ dotnet add package LokiLoggingProvider --version <version>
 
 ### Step 2. Add the Logging Provider
 
-For host based apps, add the Loki logging provider by calling the `AddLoki()` extension method on the `ILoggingBuilder` instance when configuring your host.
+For host based apps using the `WebApplicationBuilder` introduced in .NET 6, add the Loki logging provider by calling the `AddLoki()` extension method on the `WebApplicationBuilder.Logging` builder instance.
+
+```C#
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Logging.AddLoki();
+```
+
+For older host based apps, add the Loki logging provider by calling the `AddLoki()` extension method on the `ILoggingBuilder` instance when configuring your host.
 
 ```C#
 using Microsoft.AspNetCore.Hosting;
