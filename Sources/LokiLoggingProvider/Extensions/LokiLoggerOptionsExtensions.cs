@@ -1,41 +1,40 @@
-namespace LokiLoggingProvider.Extensions
+namespace LokiLoggingProvider.Extensions;
+
+using LokiLoggingProvider.Formatters;
+using LokiLoggingProvider.LoggerFactories;
+using LokiLoggingProvider.Options;
+
+internal static class LokiLoggerOptionsExtensions
 {
-    using LokiLoggingProvider.Formatters;
-    using LokiLoggingProvider.LoggerFactories;
-    using LokiLoggingProvider.Options;
-
-    internal static class LokiLoggerOptionsExtensions
+    public static ILogEntryFormatter CreateFormatter(this LokiLoggerOptions options)
     {
-        public static ILogEntryFormatter CreateFormatter(this LokiLoggerOptions options)
+        return options.Formatter switch
         {
-            return options.Formatter switch
-            {
-                Formatter.Json => new JsonFormatter(options.JsonFormatter),
-                Formatter.Logfmt => new LogfmtFormatter(options.LogfmtFormatter),
-                _ => new SimpleFormatter(options.SimpleFormatter),
-            };
-        }
+            Formatter.Json => new JsonFormatter(options.JsonFormatter),
+            Formatter.Logfmt => new LogfmtFormatter(options.LogfmtFormatter),
+            _ => new SimpleFormatter(options.SimpleFormatter),
+        };
+    }
 
-        public static ILokiLoggerFactory CreateLoggerFactory(this LokiLoggerOptions options)
+    public static ILokiLoggerFactory CreateLoggerFactory(this LokiLoggerOptions options)
+    {
+        ILogEntryFormatter formatter = options.CreateFormatter();
+
+        return options.Client switch
         {
-            ILogEntryFormatter formatter = options.CreateFormatter();
+            PushClient.Grpc => new GrpcLoggerFactory(
+                options.Grpc,
+                options.StaticLabels,
+                options.DynamicLabels,
+                formatter),
 
-            return options.Client switch
-            {
-                PushClient.Grpc => new GrpcLoggerFactory(
-                    options.Grpc,
-                    options.StaticLabels,
-                    options.DynamicLabels,
-                    formatter),
+            PushClient.Http => new HttpLoggerFactory(
+                options.Http,
+                options.StaticLabels,
+                options.DynamicLabels,
+                formatter),
 
-                PushClient.Http => new HttpLoggerFactory(
-                    options.Http,
-                    options.StaticLabels,
-                    options.DynamicLabels,
-                    formatter),
-
-                _ => new NullLoggerFactory(),
-            };
-        }
+            _ => new NullLoggerFactory(),
+        };
     }
 }

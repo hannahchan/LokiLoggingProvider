@@ -14,7 +14,7 @@ string target = Argument("Target", "Validate");
 // GLOBAL VARIABLES
 //////////////////////////////////////////////////////////////////////
 
-string artifacts = "./Artifacts";
+string artifacts = "./artifacts";
 string auditArtifacts = $"{artifacts}/Audit";
 string buildArtifacts = $"{artifacts}/Release";
 string testArtifacts = $"{artifacts}";
@@ -38,7 +38,7 @@ Task("Audit")
 
         DeleteDirectories(GetDirectories(auditArtifacts), deleteSettings);
 
-        DotNetCoreTool("CycloneDX", new DotNetCoreToolSettings
+        DotNetTool("CycloneDX", new DotNetToolSettings
         {
             ArgumentCustomization = args => args
                 .Append(solution)
@@ -50,7 +50,7 @@ Task("Audit")
 Task("Clean")
     .Does(() =>
     {
-        DotNetCoreClean(solution, new DotNetCoreCleanSettings
+        DotNetClean(solution, new DotNetCleanSettings
         {
             Configuration = configuration
         });
@@ -59,7 +59,7 @@ Task("Clean")
 Task("Restore")
     .Does(() =>
     {
-        DotNetCoreRestore(solution);
+        DotNetRestore(solution);
     });
 
 Task("Build")
@@ -67,7 +67,7 @@ Task("Build")
     .IsDependentOn("Restore")
     .Does(() =>
     {
-        DotNetCoreBuild(solution, new DotNetCoreBuildSettings
+        DotNetBuild(solution, new DotNetBuildSettings
         {
             Configuration = configuration,
             NoRestore = true
@@ -86,7 +86,7 @@ Task("Test")
 
         DeleteDirectories(GetDirectories("./Tests/**/TestResults"), deleteSettings);
 
-        DotNetCoreTestSettings testSettings = new DotNetCoreTestSettings
+        DotNetTestSettings testSettings = new DotNetTestSettings
         {
             ArgumentCustomization = args => args
                 .Append("--collect:\"XPlat Code Coverage\"")
@@ -97,16 +97,17 @@ Task("Test")
             NoBuild = true
         };
 
-        DotNetCoreTest(solution, testSettings);
+        DotNetTest(solution, testSettings);
 
         string coverageHistory = $"{testArtifacts}/CoverageHistory";
         string coverageReports = $"{testArtifacts}/CoverageReports";
         string reportTypes = "Html;Cobertura;";
-        string classFilters = "-Gogoproto*;-Logproto*";
+        string classFilters = "-Gogoproto*;-Logproto*;-Stats*";
+        string fileFilters = "-*.g.cs;-*.generated.cs";
 
         DeleteDirectories(GetDirectories(coverageReports), deleteSettings);
 
-        DotNetCoreTool("reportgenerator", new DotNetCoreToolSettings
+        DotNetTool("reportgenerator", new DotNetToolSettings
         {
             ArgumentCustomization = args => args
                 .Append($"-reports:\"./Tests/*.UnitTests/TestResults/*/coverage.cobertura.xml\"")
@@ -116,6 +117,7 @@ Task("Test")
                 .Append($"-title:\"{projectName} Unit Tests\"")
                 .Append($"-verbosity:\"Error\"")
                 .Append($"-classfilters:\"{classFilters}\"")
+                .Append($"-filefilters:\"{fileFilters}")
         });
     });
 
@@ -131,14 +133,14 @@ Task("Pack")
 
         DeleteDirectories(GetDirectories($"{buildArtifacts}"), deleteSettings);
 
-        DotNetCorePackSettings settings = new DotNetCorePackSettings
+        DotNetPackSettings settings = new DotNetPackSettings
         {
             Configuration = configuration,
             NoBuild = true,
             OutputDirectory = $"{buildArtifacts}"
         };
 
-        DotNetCorePack("./Sources/LokiLoggingProvider", settings);
+        DotNetPack("./Sources/LokiLoggingProvider", settings);
     });
 
 Task("Validate")
@@ -149,7 +151,7 @@ Task("Validate")
 
         foreach (FilePath filePath in filePaths)
         {
-            DotNetCoreTool("validate", new DotNetCoreToolSettings
+            DotNetTool("validate", new DotNetToolSettings
             {
                 ArgumentCustomization = args => args
                     .Append("package")

@@ -1,111 +1,110 @@
-namespace LokiLoggingProvider.Logger
+namespace LokiLoggingProvider.Logger;
+
+using System;
+using System.Collections.Concurrent;
+using System.Threading;
+using LokiLoggingProvider.PushClients;
+
+internal sealed class LokiLogEntryProcessor : ILokiLogEntryProcessor
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Threading;
-    using LokiLoggingProvider.PushClients;
+    private const int MaxQueuedMessages = 1024;
 
-    internal sealed class LokiLogEntryProcessor : ILokiLogEntryProcessor
+    private readonly ILokiPushClient client;
+
+    private readonly Thread backgroundThread;
+
+    private bool disposed;
+
+    public LokiLogEntryProcessor(ILokiPushClient client)
     {
-        private const int MaxQueuedMessages = 1024;
+        this.client = client;
 
-        private readonly ILokiPushClient client;
-
-        private readonly Thread backgroundThread;
-
-        private bool disposed;
-
-        public LokiLogEntryProcessor(ILokiPushClient client)
+        this.backgroundThread = new Thread(this.ProcessLogQueue)
         {
-            this.client = client;
+            Name = nameof(LokiLogEntryProcessor),
+        };
 
-            this.backgroundThread = new Thread(this.ProcessLogQueue)
-            {
-                Name = nameof(LokiLogEntryProcessor),
-            };
+        this.backgroundThread.Start();
+    }
 
-            this.backgroundThread.Start();
+    // Internal for testing
+    internal BlockingCollection<LokiLogEntry> MessageQueue { get; } = new BlockingCollection<LokiLogEntry>(MaxQueuedMessages);
+
+    public void Dispose()
+    {
+        if (this.disposed)
+        {
+            return;
         }
 
-        // Internal for testing
-        internal BlockingCollection<LokiLogEntry> MessageQueue { get; } = new BlockingCollection<LokiLogEntry>(MaxQueuedMessages);
+        this.MessageQueue.CompleteAdding();
 
-        public void Dispose()
+        try
         {
-            if (this.disposed)
-            {
-                return;
-            }
-
-            this.MessageQueue.CompleteAdding();
-
-            try
-            {
-                this.backgroundThread.Join();
-            }
-            catch (ThreadStateException)
-            {
-                // Do nothing
-            }
-
-            this.client.Dispose();
-            this.disposed = true;
+            this.backgroundThread.Join();
+        }
+        catch (ThreadStateException)
+        {
+            // Do nothing
         }
 
-        public void EnqueueMessage(LokiLogEntry message)
+        this.client.Dispose();
+        this.disposed = true;
+    }
+
+    public void EnqueueMessage(LokiLogEntry message)
+    {
+        if (this.disposed)
         {
-            if (this.disposed)
-            {
-                throw new ObjectDisposedException(nameof(LokiLogEntryProcessor));
-            }
-
-            if (this.MessageQueue.IsAddingCompleted)
-            {
-                return;
-            }
-
-            try
-            {
-                this.MessageQueue.Add(message);
-            }
-            catch (InvalidOperationException)
-            {
-                // Do nothing
-            }
+            throw new ObjectDisposedException(nameof(LokiLogEntryProcessor));
         }
 
-        private void ProcessLogQueue()
+        if (this.MessageQueue.IsAddingCompleted)
         {
-            try
-            {
-                foreach (LokiLogEntry entry in this.MessageQueue.GetConsumingEnumerable())
-                {
-                    this.PushMessage(entry);
-                }
-            }
-            catch
-            {
-                try
-                {
-                    this.MessageQueue.CompleteAdding();
-                }
-                catch
-                {
-                    // Do nothing
-                }
-            }
+            return;
         }
 
-        private void PushMessage(LokiLogEntry entry)
+        try
+        {
+            this.MessageQueue.Add(message);
+        }
+        catch (InvalidOperationException)
+        {
+            // Do nothing
+        }
+    }
+
+    private void ProcessLogQueue()
+    {
+        try
+        {
+            foreach (LokiLogEntry entry in this.MessageQueue.GetConsumingEnumerable())
+            {
+                this.PushMessage(entry);
+            }
+        }
+        catch
         {
             try
             {
-                this.client.Push(entry);
+                this.MessageQueue.CompleteAdding();
             }
             catch
             {
                 // Do nothing
             }
+        }
+    }
+
+    private void PushMessage(LokiLogEntry entry)
+    {
+        try
+        {
+            this.client.Push(entry);
+        }
+        catch
+        {
+            // Do nothing
         }
     }
 }

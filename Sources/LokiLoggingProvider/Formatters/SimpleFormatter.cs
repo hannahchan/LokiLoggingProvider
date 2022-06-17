@@ -1,52 +1,51 @@
-namespace LokiLoggingProvider.Formatters
+namespace LokiLoggingProvider.Formatters;
+
+using System;
+using System.Diagnostics;
+using LokiLoggingProvider.Extensions;
+using LokiLoggingProvider.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
+internal class SimpleFormatter : ILogEntryFormatter
 {
-    using System;
-    using System.Diagnostics;
-    using LokiLoggingProvider.Extensions;
-    using LokiLoggingProvider.Options;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
+    private readonly SimpleFormatterOptions formatterOptions;
 
-    internal class SimpleFormatter : ILogEntryFormatter
+    public SimpleFormatter(SimpleFormatterOptions formatterOptions)
     {
-        private readonly SimpleFormatterOptions formatterOptions;
+        this.formatterOptions = formatterOptions;
+    }
 
-        public SimpleFormatter(SimpleFormatterOptions formatterOptions)
+    public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
+    {
+        string message = $"[{GetLogLevelString(logEntry.LogLevel)}] ";
+
+        if (this.formatterOptions.IncludeActivityTracking && Activity.Current is Activity activity)
         {
-            this.formatterOptions = formatterOptions;
+            message += $"{activity.GetTraceId()} - ";
         }
 
-        public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
+        message += logEntry.Formatter?.Invoke(logEntry.State, logEntry.Exception);
+
+        if (logEntry.Exception != null)
         {
-            string message = $"[{GetLogLevelString(logEntry.LogLevel)}] ";
-
-            if (this.formatterOptions.IncludeActivityTracking && Activity.Current is Activity activity)
-            {
-                message += $"{activity.GetTraceId()} - ";
-            }
-
-            message += logEntry.Formatter(logEntry.State, logEntry.Exception);
-
-            if (logEntry.Exception != null)
-            {
-                message += Environment.NewLine + logEntry.Exception.ToString();
-            }
-
-            return message;
+            message += Environment.NewLine + logEntry.Exception.ToString();
         }
 
-        private static string GetLogLevelString(LogLevel logLevel)
+        return message;
+    }
+
+    private static string GetLogLevelString(LogLevel logLevel)
+    {
+        return logLevel switch
         {
-            return logLevel switch
-            {
-                LogLevel.Trace => "TRCE",
-                LogLevel.Debug => "DBUG",
-                LogLevel.Information => "INFO",
-                LogLevel.Warning => "WARN",
-                LogLevel.Error => "EROR",
-                LogLevel.Critical => "CRIT",
-                _ => throw new ArgumentOutOfRangeException(nameof(logLevel)),
-            };
-        }
+            LogLevel.Trace => "TRCE",
+            LogLevel.Debug => "DBUG",
+            LogLevel.Information => "INFO",
+            LogLevel.Warning => "WARN",
+            LogLevel.Error => "EROR",
+            LogLevel.Critical => "CRIT",
+            _ => throw new ArgumentOutOfRangeException(nameof(logLevel)),
+        };
     }
 }

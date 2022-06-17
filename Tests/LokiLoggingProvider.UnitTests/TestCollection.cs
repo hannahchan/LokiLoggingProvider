@@ -1,7 +1,6 @@
-namespace LokiLoggingProvider.UnitTests
+namespace LokiLoggingProvider.UnitTests;
+
+public static class TestCollection
 {
-    public static class TestCollection
-    {
-        public const string Activity = nameof(Activity);
-    }
+    public const string Activity = nameof(Activity);
 }

@@ -1,24 +1,23 @@
-namespace LokiLoggingProvider.Logger
+namespace LokiLoggingProvider.Logger;
+
+using System;
+using Microsoft.Extensions.Logging;
+
+internal class NullExternalScopeProvider : IExternalScopeProvider
 {
-    using System;
-    using Microsoft.Extensions.Logging;
-
-    internal class NullExternalScopeProvider : IExternalScopeProvider
+    private NullExternalScopeProvider()
     {
-        private NullExternalScopeProvider()
-        {
-        }
+    }
 
-        public static NullExternalScopeProvider Instance { get; } = new NullExternalScopeProvider();
+    public static NullExternalScopeProvider Instance { get; } = new NullExternalScopeProvider();
 
-        public void ForEachScope<TState>(Action<object, TState> callback, TState state)
-        {
-            // Do nothing
-        }
+    public void ForEachScope<TState>(Action<object, TState> callback, TState state)
+    {
+        // Do nothing
+    }
 
-        public IDisposable Push(object state)
-        {
-            return NullScope.Instance;
-        }
+    public IDisposable Push(object? state)
+    {
+        return NullScope.Instance;
     }
 }

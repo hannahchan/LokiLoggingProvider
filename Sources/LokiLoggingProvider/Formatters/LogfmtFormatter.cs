@@ -1,103 +1,102 @@
-namespace LokiLoggingProvider.Formatters
+namespace LokiLoggingProvider.Formatters;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using LokiLoggingProvider.Extensions;
+using LokiLoggingProvider.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
+internal class LogfmtFormatter : ILogEntryFormatter
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using LokiLoggingProvider.Extensions;
-    using LokiLoggingProvider.Options;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
+    private readonly LogfmtFormatterOptions formatterOptions;
 
-    internal class LogfmtFormatter : ILogEntryFormatter
+    public LogfmtFormatter(LogfmtFormatterOptions formatterOptions)
     {
-        private readonly LogfmtFormatterOptions formatterOptions;
+        this.formatterOptions = formatterOptions;
+    }
 
-        public LogfmtFormatter(LogfmtFormatterOptions formatterOptions)
+    public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
+    {
+        LogValues logValues = new();
+        logValues.SetLogLevel(logEntry.LogLevel.ToString());
+
+        if (this.formatterOptions.IncludeCategory)
         {
-            this.formatterOptions = formatterOptions;
+            logValues.SetCategory(logEntry.Category);
         }
 
-        public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
+        if (this.formatterOptions.IncludeEventId)
         {
-            LogValues logValues = new();
-            logValues.SetLogLevel(logEntry.LogLevel.ToString());
+            logValues.SetEventId(logEntry.EventId.Id);
+        }
 
-            if (this.formatterOptions.IncludeCategory)
+        logValues.SetMessage(logEntry.Formatter?.Invoke(logEntry.State, logEntry.Exception));
+
+        if (logEntry.State is IEnumerable<KeyValuePair<string, object?>> state)
+        {
+            foreach (KeyValuePair<string, object?> keyValuePair in state)
             {
-                logValues.SetCategory(logEntry.Category);
+                logValues.TryAdd(keyValuePair.Key, keyValuePair.Value);
             }
+        }
 
-            if (this.formatterOptions.IncludeEventId)
-            {
-                logValues.SetEventId(logEntry.EventId.Id);
-            }
-
-            logValues.SetMessage(logEntry.Formatter(logEntry.State, logEntry.Exception));
-
-            if (logEntry.State is IEnumerable<KeyValuePair<string, object?>> state)
-            {
-                foreach (KeyValuePair<string, object?> keyValuePair in state)
+        if (this.formatterOptions.IncludeScopes && scopeProvider != null)
+        {
+            scopeProvider.ForEachScope(
+                (scope, state) =>
                 {
-                    logValues.TryAdd(keyValuePair.Key, keyValuePair.Value);
-                }
-            }
-
-            if (this.formatterOptions.IncludeScopes && scopeProvider != null)
-            {
-                scopeProvider.ForEachScope(
-                    (scope, state) =>
+                    if (scope is IEnumerable<KeyValuePair<string, object?>> keyValuePairs)
                     {
-                        if (scope is IEnumerable<KeyValuePair<string, object?>> keyValuePairs)
+                        foreach (KeyValuePair<string, object?> keyValuePair in keyValuePairs)
                         {
-                            foreach (KeyValuePair<string, object?> keyValuePair in keyValuePairs)
-                            {
-                                state.TryAdd(keyValuePair.Key, keyValuePair.Value);
-                            }
+                            state.TryAdd(keyValuePair.Key, keyValuePair.Value);
                         }
-                    },
-                    logValues);
-            }
-
-            if (logEntry.Exception != null)
-            {
-                logValues.SetException(logEntry.Exception.GetType());
-            }
-
-            if (this.formatterOptions.IncludeActivityTracking)
-            {
-                logValues.AddActivityTracking();
-            }
-
-            string message = string.Join(" ", logValues.Select(keyValuePair => $"{ToLogfmtKey(keyValuePair.Key)}={ToLogfmtValue(keyValuePair.Value)}"));
-
-            if (logEntry.Exception != null && this.formatterOptions.PrintExceptions)
-            {
-                message += Environment.NewLine + logEntry.Exception.ToString();
-            }
-
-            return message;
+                    }
+                },
+                logValues);
         }
 
-        private static string ToLogfmtKey(string key)
+        if (logEntry.Exception != null)
         {
-            return key.Replace(" ", string.Empty);
+            logValues.SetException(logEntry.Exception.GetType());
         }
 
-        private static string ToLogfmtValue(object? value)
+        if (this.formatterOptions.IncludeActivityTracking)
         {
-            string? stringValue = value?.ToString();
-
-            if (string.IsNullOrEmpty(stringValue))
-            {
-                return "\"\"";
-            }
-
-            if (stringValue.Contains(" "))
-            {
-                return $"\"{stringValue}\"";
-            }
-
-            return stringValue;
+            logValues.AddActivityTracking();
         }
+
+        string message = string.Join(" ", logValues.Select(keyValuePair => $"{ToLogfmtKey(keyValuePair.Key)}={ToLogfmtValue(keyValuePair.Value)}"));
+
+        if (logEntry.Exception != null && this.formatterOptions.PrintExceptions)
+        {
+            message += Environment.NewLine + logEntry.Exception.ToString();
+        }
+
+        return message;
+    }
+
+    private static string ToLogfmtKey(string key)
+    {
+        return key.Replace(" ", string.Empty);
+    }
+
+    private static string ToLogfmtValue(object? value)
+    {
+        string? stringValue = value?.ToString();
+
+        if (string.IsNullOrEmpty(stringValue))
+        {
+            return "\"\"";
+        }
+
+        if (stringValue.Contains(' '))
+        {
+            return $"\"{stringValue}\"";
+        }
+
+        return stringValue;
     }
 }

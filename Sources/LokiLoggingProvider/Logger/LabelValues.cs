@@ -1,105 +1,104 @@
-namespace LokiLoggingProvider.Logger
+namespace LokiLoggingProvider.Logger;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using LokiLoggingProvider.Options;
+using Microsoft.Extensions.Logging.Abstractions;
+
+internal class LabelValues : SortedDictionary<string, string>
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using LokiLoggingProvider.Options;
-    using Microsoft.Extensions.Logging.Abstractions;
-
-    internal class LabelValues : SortedDictionary<string, string>
+    public LabelValues()
     {
-        public LabelValues()
+    }
+
+    public LabelValues(StaticLabelOptions options)
+    {
+        if (!string.IsNullOrWhiteSpace(options.JobName))
         {
+            this.SetJob(options.JobName);
         }
 
-        public LabelValues(StaticLabelOptions options)
+        if (options.IncludeInstanceLabel)
         {
-            if (!string.IsNullOrWhiteSpace(options.JobName))
-            {
-                this.SetJob(options.JobName);
-            }
+            this.SetInstance(Environment.MachineName);
+        }
 
-            if (options.IncludeInstanceLabel)
-            {
-                this.SetInstance(Environment.MachineName);
-            }
+        foreach (KeyValuePair<string, object?> label in options.AdditionalStaticLabels)
+        {
+            string? value = label.Value?.ToString();
 
-            foreach (KeyValuePair<string, object?> label in options.AdditionalStaticLabels)
+            if (value != null)
             {
-                string? value = label.Value?.ToString();
-
-                if (value != null)
-                {
-                    this.TryAdd(label.Key.Replace(" ", string.Empty), value);
-                }
+                this.TryAdd(label.Key.Replace(" ", string.Empty), value);
             }
         }
+    }
 
-        private LabelValues(IDictionary<string, string> dictionary)
-            : base(dictionary)
+    private LabelValues(IDictionary<string, string> dictionary)
+        : base(dictionary)
+    {
+    }
+
+    public LabelValues AddDynamicLabels<TState>(DynamicLabelOptions options, LogEntry<TState> logEntry)
+    {
+        LabelValues labelValues = new(this);
+
+        if (options.IncludeCategory)
         {
+            labelValues.SetCategory(logEntry.Category);
         }
 
-        public LabelValues AddDynamicLabels<TState>(DynamicLabelOptions options, LogEntry<TState> logEntry)
+        if (options.IncludeLogLevel)
         {
-            LabelValues labelValues = new(this);
-
-            if (options.IncludeCategory)
-            {
-                labelValues.SetCategory(logEntry.Category);
-            }
-
-            if (options.IncludeLogLevel)
-            {
-                labelValues.SetLogLevel(logEntry.LogLevel.ToString());
-            }
-
-            if (options.IncludeEventId)
-            {
-                labelValues.SetEventId(logEntry.EventId.ToString());
-            }
-
-            if (options.IncludeException && logEntry.Exception != null)
-            {
-                labelValues.SetException(logEntry.Exception.GetType().ToString());
-            }
-
-            return labelValues;
+            labelValues.SetLogLevel(logEntry.LogLevel.ToString());
         }
 
-        public void SetJob(string value)
+        if (options.IncludeEventId)
         {
-            this["job"] = value;
+            labelValues.SetEventId(logEntry.EventId.ToString());
         }
 
-        public void SetInstance(string value)
+        if (options.IncludeException && logEntry.Exception != null)
         {
-            this["instance"] = value;
+            labelValues.SetException(logEntry.Exception.GetType().ToString());
         }
 
-        public void SetCategory(string value)
-        {
-            this["category"] = value;
-        }
+        return labelValues;
+    }
 
-        public void SetLogLevel(string value)
-        {
-            this["level"] = value;
-        }
+    public void SetJob(string value)
+    {
+        this["job"] = value;
+    }
 
-        public void SetEventId(string value)
-        {
-            this["eventId"] = value;
-        }
+    public void SetInstance(string value)
+    {
+        this["instance"] = value;
+    }
 
-        public void SetException(string value)
-        {
-            this["exception"] = value;
-        }
+    public void SetCategory(string value)
+    {
+        this["category"] = value;
+    }
 
-        public override string ToString()
-        {
-            return string.Join(",", this.Select(keyValuePair => $"{keyValuePair.Key}=\"{keyValuePair.Value}\""));
-        }
+    public void SetLogLevel(string value)
+    {
+        this["level"] = value;
+    }
+
+    public void SetEventId(string value)
+    {
+        this["eventId"] = value;
+    }
+
+    public void SetException(string value)
+    {
+        this["exception"] = value;
+    }
+
+    public override string ToString()
+    {
+        return string.Join(",", this.Select(keyValuePair => $"{keyValuePair.Key}=\"{keyValuePair.Value}\""));
     }
 }

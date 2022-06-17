@@ -1,9 +1,8 @@
-namespace LokiLoggingProvider.Logger
-{
-    using System;
+namespace LokiLoggingProvider.Logger;
 
-    internal interface ILokiLogEntryProcessor : IDisposable
-    {
-        void EnqueueMessage(LokiLogEntry message);
-    }
+using System;
+
+internal interface ILokiLogEntryProcessor : IDisposable
+{
+    void EnqueueMessage(LokiLogEntry message);
 }

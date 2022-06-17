@@ -1,73 +1,72 @@
-namespace LokiLoggingProvider.PushClients
+namespace LokiLoggingProvider.PushClients;
+
+using System;
+using System.Net.Http;
+using System.Net.Mime;
+using System.Text.Json;
+using Google.Protobuf.WellKnownTypes;
+using LokiLoggingProvider.Logger;
+
+internal sealed class HttpPushClient : ILokiPushClient
 {
-    using System;
-    using System.Net.Http;
-    using System.Net.Mime;
-    using System.Text.Json;
-    using Google.Protobuf.WellKnownTypes;
-    using LokiLoggingProvider.Logger;
+    private const string PushEndpointV1 = "/loki/api/v1/push";
 
-    internal sealed class HttpPushClient : ILokiPushClient
+    private readonly HttpClient client;
+
+    private bool disposed;
+
+    public HttpPushClient(HttpClient client)
     {
-        private const string PushEndpointV1 = "/loki/api/v1/push";
+        this.client = client;
+    }
 
-        private readonly HttpClient client;
-
-        private bool disposed;
-
-        public HttpPushClient(HttpClient client)
+    public void Dispose()
+    {
+        if (this.disposed)
         {
-            this.client = client;
+            return;
         }
 
-        public void Dispose()
-        {
-            if (this.disposed)
-            {
-                return;
-            }
+        this.client.Dispose();
+        this.disposed = true;
+    }
 
-            this.client.Dispose();
-            this.disposed = true;
+    public void Push(LokiLogEntry entry)
+    {
+        if (this.disposed)
+        {
+            throw new ObjectDisposedException(nameof(HttpPushClient));
         }
 
-        public void Push(LokiLogEntry entry)
+        Timestamp rfc3339Timestamp = Timestamp.FromDateTime(entry.Timestamp);
+
+        var requestBody = new
         {
-            if (this.disposed)
+            streams = new[]
             {
-                throw new ObjectDisposedException(nameof(HttpPushClient));
-            }
-
-            Timestamp rfc3339Timestamp = Timestamp.FromDateTime(entry.Timestamp);
-
-            var requestBody = new
-            {
-                streams = new[]
+                new
                 {
-                    new
+                    stream = entry.Labels,
+                    values = new[]
                     {
-                        stream = entry.Labels,
-                        values = new[]
+                        new[]
                         {
-                            new[]
-                            {
-                                $"{rfc3339Timestamp.Seconds}{rfc3339Timestamp.Nanos}",
-                                entry.Message,
-                            },
+                            $"{rfc3339Timestamp.Seconds}{rfc3339Timestamp.Nanos}",
+                            entry.Message,
                         },
                     },
                 },
-            };
+            },
+        };
 
-            StringContent content = new(JsonSerializer.Serialize(requestBody), null, MediaTypeNames.Application.Json);
-            content.Headers.ContentType!.CharSet = null; // Loki does not accept 'charset' in the Content-Type header
+        StringContent content = new(JsonSerializer.Serialize(requestBody), null, MediaTypeNames.Application.Json);
+        content.Headers.ContentType!.CharSet = null; // Loki does not accept 'charset' in the Content-Type header
 
-            HttpRequestMessage request = new(HttpMethod.Post, PushEndpointV1)
-            {
-                Content = content,
-            };
+        HttpRequestMessage request = new(HttpMethod.Post, PushEndpointV1)
+        {
+            Content = content,
+        };
 
-            this.client.Send(request);
-        }
+        this.client.Send(request);
     }
 }

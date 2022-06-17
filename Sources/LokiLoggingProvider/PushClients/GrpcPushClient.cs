@@ -1,58 +1,57 @@
-namespace LokiLoggingProvider.PushClients
+namespace LokiLoggingProvider.PushClients;
+
+using System;
+using Google.Protobuf.WellKnownTypes;
+using Grpc.Net.Client;
+using Logproto;
+using LokiLoggingProvider.Logger;
+
+internal sealed class GrpcPushClient : ILokiPushClient
 {
-    using System;
-    using Google.Protobuf.WellKnownTypes;
-    using Grpc.Net.Client;
-    using Logproto;
-    using LokiLoggingProvider.Logger;
+    private readonly GrpcChannel channel;
 
-    internal sealed class GrpcPushClient : ILokiPushClient
+    private readonly Pusher.PusherClient client;
+
+    private bool disposed;
+
+    public GrpcPushClient(GrpcChannel channel)
     {
-        private readonly GrpcChannel channel;
+        this.channel = channel;
+        this.client = new Pusher.PusherClient(this.channel);
+    }
 
-        private readonly Pusher.PusherClient client;
-
-        private bool disposed;
-
-        public GrpcPushClient(GrpcChannel channel)
+    public void Dispose()
+    {
+        if (this.disposed)
         {
-            this.channel = channel;
-            this.client = new Pusher.PusherClient(this.channel);
+            return;
         }
 
-        public void Dispose()
-        {
-            if (this.disposed)
-            {
-                return;
-            }
+        this.channel.Dispose();
+        this.disposed = true;
+    }
 
-            this.channel.Dispose();
-            this.disposed = true;
+    public void Push(LokiLogEntry entry)
+    {
+        if (this.disposed)
+        {
+            throw new ObjectDisposedException(nameof(GrpcPushClient));
         }
 
-        public void Push(LokiLogEntry entry)
+        StreamAdapter stream = new()
         {
-            if (this.disposed)
-            {
-                throw new ObjectDisposedException(nameof(GrpcPushClient));
-            }
+            Labels = $"{{{entry.Labels}}}",
+        };
 
-            StreamAdapter stream = new()
-            {
-                Labels = $"{{{entry.Labels}}}",
-            };
+        stream.Entries.Add(new EntryAdapter
+        {
+            Timestamp = Timestamp.FromDateTime(entry.Timestamp),
+            Line = entry.Message,
+        });
 
-            stream.Entries.Add(new EntryAdapter
-            {
-                Timestamp = Timestamp.FromDateTime(entry.Timestamp),
-                Line = entry.Message,
-            });
+        PushRequest request = new();
+        request.Streams.Add(stream);
 
-            PushRequest request = new();
-            request.Streams.Add(stream);
-
-            this.client.Push(request);
-        }
+        this.client.Push(request);
     }
 }

@@ -1,6 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="Code Analysis Rule Set" Description="Code Analysis Rules for Scaffold" ToolsVersion="15.0">
 
+  <!-- https://github.com/DotNetAnalyzers/IDisposableAnalyzers -->
+  <Rules AnalyzerId="IDisposableAnalyzers" RuleNamespace="IDisposableAnalyzers">
+  </Rules>
+
   <!-- https://rules.sonarsource.com/csharp -->
   <Rules AnalyzerId="SonarAnalyzer.CSharp" RuleNamespace="SonarAnalyzer.CSharp">
   </Rules>

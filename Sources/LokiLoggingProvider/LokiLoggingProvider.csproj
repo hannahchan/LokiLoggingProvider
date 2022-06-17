@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -25,16 +25,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.17.3" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.39.0" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.39.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.39.1">
+    <PackageReference Include="Google.Protobuf" Version="3.21.1" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.46.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.46.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.46.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="5.0.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0">
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -44,8 +44,11 @@
     <Protobuf Include="Protos/github.com/gogo/protobuf/gogoproto/gogo.proto" GrpcServices="None">
       <SourceUrl>https://raw.githubusercontent.com/gogo/protobuf/master/gogoproto/gogo.proto</SourceUrl>
     </Protobuf>
-    <Protobuf Include="Protos/github.com/grafana/loki/pkg/logproto/logproto.proto" GrpcServices="Client" AdditionalImportDirs="Protos">
+    <Protobuf Include="Protos/github.com/grafana/loki/pkg/logproto/logproto.proto" GrpcServices="Client" AdditionalImportDirs="Protos;Protos/github.com/grafana/loki">
       <SourceUrl>https://raw.githubusercontent.com/grafana/loki/main/pkg/logproto/logproto.proto</SourceUrl>
+    </Protobuf>
+    <Protobuf Include="Protos/github.com/grafana/loki/pkg/logqlmodel/stats/stats.proto" GrpcServices="None" AdditionalImportDirs="Protos">
+      <SourceUrl>https://raw.githubusercontent.com/grafana/loki/main/pkg/logqlmodel/stats/stats.proto</SourceUrl>
     </Protobuf>
   </ItemGroup>
 

@@ -1,12 +1,11 @@
-namespace LokiLoggingProvider.LoggerFactories
+namespace LokiLoggingProvider.LoggerFactories;
+
+using System;
+using Microsoft.Extensions.Logging;
+
+internal interface ILokiLoggerFactory : IDisposable
 {
-    using System;
-    using Microsoft.Extensions.Logging;
+    ILogger CreateLogger(string categoryName);
 
-    internal interface ILokiLoggerFactory : IDisposable
-    {
-        ILogger CreateLogger(string categoryName);
-
-        void SetScopeProvider(IExternalScopeProvider scopeProvider);
-    }
+    void SetScopeProvider(IExternalScopeProvider scopeProvider);
 }

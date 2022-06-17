@@ -16,10 +16,10 @@ services:
       - source: grafana
         target: /var/lib/grafana
         type: volume
-      - source: ./Operations/Grafana/dashboards
+      - source: ./Configurations/Grafana/dashboards
         target: /etc/grafana/provisioning/dashboards
         type: bind
-      - source: ./Operations/Grafana/datasources
+      - source: ./Configurations/Grafana/datasources
         target: /etc/grafana/provisioning/datasources
         type: bind
   loki:

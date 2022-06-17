@@ -1,71 +1,60 @@
-namespace Example.WebApp
+namespace Example.WebApp;
+
+using System;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+
+public partial class RequestLoggingMiddleware
 {
-    using System;
-    using System.Threading.Tasks;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.Logging;
+    private readonly RequestDelegate next;
 
-    public class RequestLoggingMiddleware
+    private readonly ILogger logger;
+
+    public RequestLoggingMiddleware(RequestDelegate next, ILogger<RequestLoggingMiddleware> logger)
     {
-        private const string RequestStartedMessageTemplate = "Inbound HTTP {HttpMethod} {RequestPath} started";
+        this.next = next;
+        this.logger = logger;
+    }
 
-        private const string RequestFinishedMessageTemplate = "Inbound HTTP {HttpMethod} {RequestPath} finished - {StatusCode}";
+    public async Task Invoke(HttpContext httpContext)
+    {
+        HttpRequest request = httpContext.Request;
+        HttpResponse response = httpContext.Response;
 
-        private static readonly Action<ILogger, string, PathString, Exception?> LogRequestStarted =
-            LoggerMessage.Define<string, PathString>(LogLevel.Information, default, RequestStartedMessageTemplate);
+        LogRequestStarted(this.logger, LogLevel.Information, request.Method, request.Path);
 
-        private static readonly Action<ILogger, string, PathString, int, Exception?> LogRequestFinishedInformation =
-            LoggerMessage.Define<string, PathString, int>(LogLevel.Information, default, RequestFinishedMessageTemplate);
-
-        private static readonly Action<ILogger, string, PathString, int, Exception?> LogRequestFinishedWarning =
-            LoggerMessage.Define<string, PathString, int>(LogLevel.Warning, default, RequestFinishedMessageTemplate);
-
-        private static readonly Action<ILogger, string, PathString, int, Exception?> LogRequestFinishedError =
-            LoggerMessage.Define<string, PathString, int>(LogLevel.Error, default, RequestFinishedMessageTemplate);
-
-        private static readonly Action<ILogger, string, PathString, string, Exception?> LogRequestFinishedCritical =
-            LoggerMessage.Define<string, PathString, string>(LogLevel.Critical, default, RequestFinishedMessageTemplate);
-
-        private readonly RequestDelegate next;
-
-        private readonly ILogger logger;
-
-        public RequestLoggingMiddleware(RequestDelegate next, ILogger<RequestLoggingMiddleware> logger)
+        try
         {
-            this.next = next;
-            this.logger = logger;
+            await this.next.Invoke(httpContext);
+
+            if (response.StatusCode is >= 200 and <= 299)
+            {
+                LogRequestFinished(this.logger, LogLevel.Information, request.Method, request.Path, response.StatusCode);
+                return;
+            }
+
+            if (response.StatusCode >= 500)
+            {
+                LogRequestFinished(this.logger, LogLevel.Error, request.Method, request.Path, response.StatusCode);
+                return;
+            }
+
+            LogRequestFinished(this.logger, LogLevel.Warning, request.Method, request.Path, response.StatusCode);
         }
-
-        public async Task Invoke(HttpContext httpContext)
+        catch (Exception exception)
         {
-            HttpRequest request = httpContext.Request;
-            HttpResponse response = httpContext.Response;
-
-            LogRequestStarted(this.logger, request.Method, request.Path, null);
-
-            try
-            {
-                await this.next.Invoke(httpContext);
-
-                if (response.StatusCode >= 200 && response.StatusCode <= 299)
-                {
-                    LogRequestFinishedInformation(this.logger, request.Method, request.Path, response.StatusCode, null);
-                    return;
-                }
-
-                if (response.StatusCode >= 500)
-                {
-                    LogRequestFinishedError(this.logger, request.Method, request.Path, response.StatusCode, null);
-                    return;
-                }
-
-                LogRequestFinishedWarning(this.logger, request.Method, request.Path, response.StatusCode, null);
-            }
-            catch (Exception exception)
-            {
-                LogRequestFinishedCritical(this.logger, request.Method, request.Path, "Unhandled Exception", exception);
-                throw;
-            }
+            LogRequestException(this.logger, LogLevel.Critical, request.Method, request.Path, exception);
+            throw;
         }
     }
+
+    [LoggerMessage(EventId = 1, Message = "Inbound HTTP {HttpMethod} {RequestPath} started")]
+    private static partial void LogRequestStarted(ILogger logger, LogLevel logLevel, string httpMethod, PathString requestPath);
+
+    [LoggerMessage(EventId = 2, Message = "Inbound HTTP {HttpMethod} {RequestPath} finished - {StatusCode}")]
+    private static partial void LogRequestFinished(ILogger logger, LogLevel logLevel, string httpMethod, PathString requestPath, int StatusCode);
+
+    [LoggerMessage(EventId = 3, Message = "Inbound HTTP {HttpMethod} {RequestPath} finished - Unhandled Exception")]
+    private static partial void LogRequestException(ILogger logger, LogLevel logLevel, string httpMethod, PathString requestPath, Exception exception);
 }

@@ -1,18 +1,17 @@
-namespace LokiLoggingProvider.Logger
+namespace LokiLoggingProvider.Logger;
+
+using System;
+
+internal sealed class NullScope : IDisposable
 {
-    using System;
-
-    internal sealed class NullScope : IDisposable
+    private NullScope()
     {
-        private NullScope()
-        {
-        }
+    }
 
-        public static NullScope Instance { get; } = new NullScope();
+    public static NullScope Instance { get; } = new NullScope();
 
-        public void Dispose()
-        {
-            // Do nothing
-        }
+    public void Dispose()
+    {
+        // Do nothing
     }
 }

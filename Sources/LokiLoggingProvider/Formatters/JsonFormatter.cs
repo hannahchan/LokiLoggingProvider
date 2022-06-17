@@ -1,101 +1,100 @@
-namespace LokiLoggingProvider.Formatters
+namespace LokiLoggingProvider.Formatters;
+
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using LokiLoggingProvider.Extensions;
+using LokiLoggingProvider.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+
+internal class JsonFormatter : ILogEntryFormatter
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.Json;
-    using LokiLoggingProvider.Extensions;
-    using LokiLoggingProvider.Options;
-    using Microsoft.Extensions.Logging;
-    using Microsoft.Extensions.Logging.Abstractions;
+    private readonly JsonFormatterOptions formatterOptions;
 
-    internal class JsonFormatter : ILogEntryFormatter
+    private readonly JsonSerializerOptions serializerOptions;
+
+    public JsonFormatter(JsonFormatterOptions formatterOptions)
     {
-        private readonly JsonFormatterOptions formatterOptions;
+        this.formatterOptions = formatterOptions;
 
-        private readonly JsonSerializerOptions serializerOptions;
-
-        public JsonFormatter(JsonFormatterOptions formatterOptions)
+        this.serializerOptions = new JsonSerializerOptions
         {
-            this.formatterOptions = formatterOptions;
+            WriteIndented = this.formatterOptions.WriteIndented,
+        };
+    }
 
-            this.serializerOptions = new JsonSerializerOptions
-            {
-                WriteIndented = this.formatterOptions.WriteIndented,
-            };
+    public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
+    {
+        LogValues logValues = new();
+        logValues.SetLogLevel(logEntry.LogLevel.ToString());
+
+        if (this.formatterOptions.IncludeCategory)
+        {
+            logValues.SetCategory(logEntry.Category);
         }
 
-        public string Format<TState>(LogEntry<TState> logEntry, IExternalScopeProvider? scopeProvider = null)
+        if (this.formatterOptions.IncludeEventId)
         {
-            LogValues logValues = new();
-            logValues.SetLogLevel(logEntry.LogLevel.ToString());
+            logValues.SetEventId(logEntry.EventId.Id);
+        }
 
-            if (this.formatterOptions.IncludeCategory)
+        logValues.SetMessage(logEntry.Formatter?.Invoke(logEntry.State, logEntry.Exception));
+
+        if (logEntry.State is IEnumerable<KeyValuePair<string, object?>> state && state.Any())
+        {
+            try
             {
-                logValues.SetCategory(logEntry.Category);
+                logValues.SetState(new Dictionary<string, object?>(state));
             }
-
-            if (this.formatterOptions.IncludeEventId)
+            catch
             {
-                logValues.SetEventId(logEntry.EventId.Id);
+                logValues.SetState(state);
             }
+        }
 
-            logValues.SetMessage(logEntry.Formatter(logEntry.State, logEntry.Exception));
+        if (this.formatterOptions.IncludeScopes && scopeProvider != null)
+        {
+            List<object?> scopes = new();
 
-            if (logEntry.State is IEnumerable<KeyValuePair<string, object?>> state && state.Any())
-            {
-                try
+            scopeProvider.ForEachScope(
+                (scope, state) =>
                 {
-                    logValues.SetState(new Dictionary<string, object?>(state));
-                }
-                catch
-                {
-                    logValues.SetState(state);
-                }
-            }
-
-            if (this.formatterOptions.IncludeScopes && scopeProvider != null)
-            {
-                List<object> scopes = new();
-
-                scopeProvider.ForEachScope(
-                    (scope, state) =>
+                    if (scope is IEnumerable<KeyValuePair<string, object?>> keyValuePairs)
                     {
-                        if (scope is IEnumerable<KeyValuePair<string, object?>> keyValuePairs)
+                        try
                         {
-                            try
-                            {
-                                state.Add(new Dictionary<string, object?>(keyValuePairs));
-                                return;
-                            }
-                            catch
-                            {
-                                state.Add(keyValuePairs);
-                                return;
-                            }
+                            state.Add(new Dictionary<string, object?>(keyValuePairs));
+                            return;
                         }
+                        catch
+                        {
+                            state.Add(keyValuePairs);
+                            return;
+                        }
+                    }
 
-                        state.Add(scope);
-                    },
-                    scopes);
+                    state.Add(scope);
+                },
+                scopes);
 
-                if (scopes.Any())
-                {
-                    logValues.SetScopes(scopes);
-                }
-            }
-
-            if (logEntry.Exception != null)
+            if (scopes.Any())
             {
-                logValues.SetException(logEntry.Exception.GetType().ToString());
-                logValues.SetExceptionDetails(logEntry.Exception.ToString());
+                logValues.SetScopes(scopes);
             }
-
-            if (this.formatterOptions.IncludeActivityTracking)
-            {
-                logValues.AddActivityTracking();
-            }
-
-            return JsonSerializer.Serialize(logValues, this.serializerOptions);
         }
+
+        if (logEntry.Exception != null)
+        {
+            logValues.SetException(logEntry.Exception.GetType().ToString());
+            logValues.SetExceptionDetails(logEntry.Exception.ToString());
+        }
+
+        if (this.formatterOptions.IncludeActivityTracking)
+        {
+            logValues.AddActivityTracking();
+        }
+
+        return JsonSerializer.Serialize(logValues, this.serializerOptions);
     }
 }

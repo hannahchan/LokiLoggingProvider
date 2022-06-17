@@ -10,7 +10,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/Sources/Example.ConsoleApp/bin/Debug/net5.0/Example.ConsoleApp.dll",
+      "program": "${workspaceFolder}/Sources/Example.ConsoleApp/bin/Debug/net6.0/Example.ConsoleApp.dll",
       "args": [],
       "cwd": "${workspaceFolder}/Sources/Example.ConsoleApp",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -22,7 +22,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/Sources/Example.WebApp/bin/Debug/net5.0/Example.WebApp.dll",
+      "program": "${workspaceFolder}/Sources/Example.WebApp/bin/Debug/net6.0/Example.WebApp.dll",
       "args": [],
       "cwd": "${workspaceFolder}/Sources/Example.WebApp",
       "stopAtEntry": false,
