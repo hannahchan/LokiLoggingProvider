@@ -1,3 +1,5 @@
+#pragma warning disable IDISP016 // Don't use disposed instance
+
 namespace LokiLoggingProvider.UnitTests.Logger;
 
 using System;
@@ -34,14 +36,14 @@ public class LokiLogEntryProcessorUnitTests
             LokiLogEntryProcessor processor = new(client);
 
             // Act
-            Exception resul = Record.Exception(() =>
+            Exception result = Record.Exception(() =>
             {
                 processor.Dispose();
                 processor.Dispose();
             });
 
             // Assert
-            Assert.Null(resul);
+            Assert.Null(result);
         }
     }
 
@@ -113,14 +115,9 @@ public class LokiLogEntryProcessorUnitTests
         }
     }
 
-    private sealed class MockLokiPushClient : ILokiPushClient
+    private class MockLokiPushClient : ILokiPushClient
     {
         private readonly IList<LokiLogEntry> receivedLogMessageEntries = new List<LokiLogEntry>();
-
-        public void Dispose()
-        {
-            this.receivedLogMessageEntries.Clear();
-        }
 
         public void Push(LokiLogEntry entry)
         {

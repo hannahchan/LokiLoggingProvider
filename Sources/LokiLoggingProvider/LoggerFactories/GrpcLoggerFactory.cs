@@ -14,13 +14,15 @@ internal sealed class GrpcLoggerFactory : ILokiLoggerFactory
 {
     private readonly ConcurrentDictionary<string, LokiLogger> loggers = new();
 
-    private readonly ILogEntryFormatter formatter;
+    private readonly GrpcChannel channel;
 
     private readonly LokiLogEntryProcessor processor;
 
     private readonly StaticLabelOptions staticLabelOptions;
 
     private readonly DynamicLabelOptions dynamicLabelOptions;
+
+    private readonly ILogEntryFormatter formatter;
 
     private IExternalScopeProvider scopeProvider = NullExternalScopeProvider.Instance;
 
@@ -32,8 +34,8 @@ internal sealed class GrpcLoggerFactory : ILokiLoggerFactory
         DynamicLabelOptions dynamicLabelOptions,
         ILogEntryFormatter formatter)
     {
-        GrpcChannel channel = GrpcChannel.ForAddress(grpcOptions.Address);
-        GrpcPushClient grpcClient = new(channel);
+        this.channel = GrpcChannel.ForAddress(grpcOptions.Address);
+        GrpcPushClient grpcClient = new(this.channel);
         this.processor = new LokiLogEntryProcessor(grpcClient);
 
         this.staticLabelOptions = staticLabelOptions;
@@ -68,6 +70,7 @@ internal sealed class GrpcLoggerFactory : ILokiLoggerFactory
         }
 
         this.processor.Dispose();
+        this.channel.Dispose();
         this.disposed = true;
     }
 

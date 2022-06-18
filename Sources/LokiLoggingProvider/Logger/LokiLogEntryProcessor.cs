@@ -48,7 +48,6 @@ internal sealed class LokiLogEntryProcessor : ILokiLogEntryProcessor
             // Do nothing
         }
 
-        this.client.Dispose();
         this.disposed = true;
     }
 

@@ -1,3 +1,6 @@
+#pragma warning disable IDISP016 // Don't use disposed instance
+#pragma warning disable IDISP017 // Prefer using
+
 namespace LokiLoggingProvider.UnitTests.LoggerFactories;
 
 using System;
@@ -17,7 +20,7 @@ public class HttpLoggerFactoryUnitTests
         {
             // Arrange
             LokiLoggerOptions options = new();
-            ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
+            using ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
                 options.Http,
                 options.StaticLabels,
                 options.DynamicLabels,
@@ -88,7 +91,7 @@ public class HttpLoggerFactoryUnitTests
         {
             // Arrange
             LokiLoggerOptions options = new();
-            ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
+            using ILokiLoggerFactory loggerFactory = new HttpLoggerFactory(
                 options.Http,
                 options.StaticLabels,
                 options.DynamicLabels,

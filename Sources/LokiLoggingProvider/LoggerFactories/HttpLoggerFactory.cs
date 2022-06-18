@@ -16,13 +16,15 @@ internal sealed class HttpLoggerFactory : ILokiLoggerFactory
 {
     private readonly ConcurrentDictionary<string, LokiLogger> loggers = new();
 
-    private readonly ILogEntryFormatter formatter;
+    private readonly HttpClient httpClient;
 
     private readonly LokiLogEntryProcessor processor;
 
     private readonly StaticLabelOptions staticLabelOptions;
 
     private readonly DynamicLabelOptions dynamicLabelOptions;
+
+    private readonly ILogEntryFormatter formatter;
 
     private IExternalScopeProvider scopeProvider = NullExternalScopeProvider.Instance;
 
@@ -34,7 +36,7 @@ internal sealed class HttpLoggerFactory : ILokiLoggerFactory
         DynamicLabelOptions dynamicLabelOptions,
         ILogEntryFormatter formatter)
     {
-        HttpClient httpClient = new()
+        this.httpClient = new()
         {
             BaseAddress = new Uri(httpOptions.Address),
         };
@@ -42,10 +44,10 @@ internal sealed class HttpLoggerFactory : ILokiLoggerFactory
         if (!string.IsNullOrEmpty(httpOptions.User) && !string.IsNullOrEmpty(httpOptions.Password))
         {
             byte[] credentials = Encoding.ASCII.GetBytes($"{httpOptions.User}:{httpOptions.Password}");
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(credentials));
+            this.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(credentials));
         }
 
-        HttpPushClient pushClient = new(httpClient);
+        HttpPushClient pushClient = new(this.httpClient);
         this.processor = new LokiLogEntryProcessor(pushClient);
 
         this.staticLabelOptions = staticLabelOptions;
@@ -80,6 +82,7 @@ internal sealed class HttpLoggerFactory : ILokiLoggerFactory
         }
 
         this.processor.Dispose();
+        this.httpClient.Dispose();
         this.disposed = true;
     }
 

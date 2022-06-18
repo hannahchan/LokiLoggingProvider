@@ -1,3 +1,6 @@
+#pragma warning disable IDISP016 // Don't use disposed instance
+#pragma warning disable IDISP017 // Prefer using
+
 namespace LokiLoggingProvider.UnitTests;
 
 using System;
@@ -17,7 +20,7 @@ public class LokiLoggerProviderUnitTests
         {
             // Arrange
             MockOptionsMonitor options = new(new LokiLoggerOptions());
-            ILoggerProvider loggerProvider = new LokiLoggerProvider(options);
+            using ILoggerProvider loggerProvider = new LokiLoggerProvider(options);
 
             string categoryName = nameof(categoryName);
 
@@ -77,7 +80,7 @@ public class LokiLoggerProviderUnitTests
         {
             // Arrange
             MockOptionsMonitor options = new(new LokiLoggerOptions { Client = client });
-            ILoggerProvider loggerProvider = new LokiLoggerProvider(options);
+            using ILoggerProvider loggerProvider = new LokiLoggerProvider(options);
 
             string categoryName = nameof(categoryName);
 

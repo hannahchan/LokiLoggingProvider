@@ -42,7 +42,7 @@ public class LokiLoggerOptionsExtensionsUnitTests
             LokiLoggerOptions options = new() { Client = client };
 
             // Act
-            ILokiLoggerFactory result = options.CreateLoggerFactory();
+            using ILokiLoggerFactory result = options.CreateLoggerFactory();
 
             // Assert
             Assert.Equal(expectedType, result.GetType());

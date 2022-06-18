@@ -1,6 +1,5 @@
 namespace LokiLoggingProvider.UnitTests;
 
-using System;
 using LokiLoggingProvider.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -20,7 +19,7 @@ public class LokiLoggerExtensionsUnitTests
         builder.AddLoki();
 
         // Assert
-        IServiceProvider serviceProvider = builder.Services.BuildServiceProvider();
+        using ServiceProvider serviceProvider = builder.Services.BuildServiceProvider();
 
         Assert.NotNull(serviceProvider.GetService<IOptions<LokiLoggerOptions>>());
         Assert.NotNull(serviceProvider.GetService<IOptionsSnapshot<LokiLoggerOptions>>());
@@ -102,7 +101,7 @@ public class LokiLoggerExtensionsUnitTests
         builder.AddLoki(configure => configure.StaticLabels.JobName = nameof(LokiLoggerExtensionsUnitTests));
 
         // Assert
-        IServiceProvider serviceProvider = builder.Services.BuildServiceProvider();
+        using ServiceProvider serviceProvider = builder.Services.BuildServiceProvider();
 
         IOptions<LokiLoggerOptions> options = serviceProvider.GetService<IOptions<LokiLoggerOptions>>();
         IOptionsSnapshot<LokiLoggerOptions> optionsSnapshot = serviceProvider.GetService<IOptionsSnapshot<LokiLoggerOptions>>();

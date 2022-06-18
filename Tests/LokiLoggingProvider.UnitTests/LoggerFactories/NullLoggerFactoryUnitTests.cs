@@ -1,3 +1,6 @@
+#pragma warning disable IDISP016 // Don't use disposed instance
+#pragma warning disable IDISP017 // Prefer using
+
 namespace LokiLoggingProvider.UnitTests.LoggerFactories;
 
 using System;
@@ -15,7 +18,7 @@ public class NullLoggerFactoryUnitTests
         public void When_CreatingLogger_Expect_LoggerCreated()
         {
             // Arrange
-            ILokiLoggerFactory loggerFactory = new LokiLoggingProvider.LoggerFactories.NullLoggerFactory();
+            using ILokiLoggerFactory loggerFactory = new LokiLoggingProvider.LoggerFactories.NullLoggerFactory();
             string categoryName = nameof(categoryName);
 
             // Act
@@ -68,7 +71,7 @@ public class NullLoggerFactoryUnitTests
         public void When_SettingScopeProvider_Expect_NoExceptions()
         {
             // Arrange
-            ILokiLoggerFactory loggerFactory = new LokiLoggingProvider.LoggerFactories.NullLoggerFactory();
+            using ILokiLoggerFactory loggerFactory = new LokiLoggingProvider.LoggerFactories.NullLoggerFactory();
 
             // Act
             Exception result = Record.Exception(() => loggerFactory.SetScopeProvider(NullExternalScopeProvider.Instance));

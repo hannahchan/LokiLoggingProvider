@@ -12,26 +12,6 @@ using Xunit;
 
 public class HttpPushClientUnitTests
 {
-    public class Dispose
-    {
-        [Fact]
-        public void When_DisposingMoreThanOnce_Expect_NoExceptions()
-        {
-            // Arrange
-            HttpPushClient pushClient = new(new HttpClient());
-
-            // Act
-            Exception result = Record.Exception(() =>
-            {
-                pushClient.Dispose();
-                pushClient.Dispose();
-            });
-
-            // Assert
-            Assert.Null(result);
-        }
-    }
-
     public class Push
     {
         [Fact]
@@ -72,23 +52,6 @@ public class HttpPushClientUnitTests
                         "{\"streams\":[{\"stream\":{\"key1\":\"value1\",\"key2\":\"value2\"},\"values\":[[\"15750756000\",\"My log message.\"]]}]}",
                         request.Content.ReadAsStringAsync().Result);
                 });
-        }
-
-        [Fact]
-        public void When_PushingLogMessageEntryWithDisposedPushClient_Expect_ObjectDisposedException()
-        {
-            // Arrange
-            HttpPushClient pushClient = new(new HttpClient());
-            pushClient.Dispose();
-
-            LokiLogEntry entry = new(default, default, default);
-
-            // Act
-            Exception result = Record.Exception(() => pushClient.Push(entry));
-
-            // Assert
-            ObjectDisposedException objectDisposedException = Assert.IsType<ObjectDisposedException>(result);
-            Assert.Equal(nameof(HttpPushClient), objectDisposedException.ObjectName);
         }
     }
 

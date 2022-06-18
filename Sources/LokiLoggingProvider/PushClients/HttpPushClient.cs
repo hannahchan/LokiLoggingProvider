@@ -1,6 +1,5 @@
 namespace LokiLoggingProvider.PushClients;
 
-using System;
 using System.Net.Http;
 using System.Net.Mime;
 using System.Text.Json;
@@ -13,31 +12,13 @@ internal sealed class HttpPushClient : ILokiPushClient
 
     private readonly HttpClient client;
 
-    private bool disposed;
-
     public HttpPushClient(HttpClient client)
     {
         this.client = client;
     }
 
-    public void Dispose()
-    {
-        if (this.disposed)
-        {
-            return;
-        }
-
-        this.client.Dispose();
-        this.disposed = true;
-    }
-
     public void Push(LokiLogEntry entry)
     {
-        if (this.disposed)
-        {
-            throw new ObjectDisposedException(nameof(HttpPushClient));
-        }
-
         Timestamp rfc3339Timestamp = Timestamp.FromDateTime(entry.Timestamp);
 
         var requestBody = new
@@ -67,6 +48,6 @@ internal sealed class HttpPushClient : ILokiPushClient
             Content = content,
         };
 
-        this.client.Send(request);
+        this.client.Send(request).Dispose();
     }
 }

@@ -1,9 +1,8 @@
 namespace LokiLoggingProvider.PushClients;
 
-using System;
 using LokiLoggingProvider.Logger;
 
-internal interface ILokiPushClient : IDisposable
+internal interface ILokiPushClient
 {
     void Push(LokiLogEntry entry);
 }

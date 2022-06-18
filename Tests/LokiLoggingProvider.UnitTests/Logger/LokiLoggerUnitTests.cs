@@ -18,7 +18,7 @@ public class LokiLoggerUnitTests
             // Arrange
             string categoryName = nameof(categoryName);
             ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
-            ILokiLogEntryProcessor processor = new MockLogEntryProcessor();
+            using ILokiLogEntryProcessor processor = new MockLogEntryProcessor();
             LokiLoggerOptions options = new();
             MockScopeProvider scopeProvider = new();
 
@@ -75,7 +75,7 @@ public class LokiLoggerUnitTests
             // Arrange
             string categoryName = nameof(categoryName);
             ILogEntryFormatter formatter = new SimpleFormatter(new SimpleFormatterOptions());
-            ILokiLogEntryProcessor processor = new MockLogEntryProcessor();
+            using ILokiLogEntryProcessor processor = new MockLogEntryProcessor();
             LokiLoggerOptions options = new();
 
             LokiLogger logger = new(
