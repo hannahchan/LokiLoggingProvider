@@ -1,6 +1,6 @@
 # Getting Started
 
-If you are intending to help develop and contribute to the Loki Logging Provider package, this guide is meant to help you setup your development environment.
+If you are intending to help develop and contribute to the Loki logging provider package, this guide is meant to help you setup your development environment.
 
 ## Local Development
 
@@ -42,7 +42,7 @@ For more information about Cake, please visit <https://cakebuild.net>.
 
 ## Running and Debugging the Package
 
-During development of the Loki Logging Provider, you may wish to experience how the library actually works. Included in the solution is a [`docker-compose.yml`](../docker-compose.yml) file which you can use to spin up an instance Grafana and Loki. Once spun up you can use the two included example applications which reference the Loki Logging Provider package to send logs to Loki.
+During development of the Loki logging provider, you may wish to experience how the library actually works. Included in the solution is a [`docker-compose.yml`](../docker-compose.yml) file which you can use to spin up an instance Grafana and Loki. Once spun up you can use the two included example applications which reference the Loki logging provider package to send logs to Loki.
 
 To spin up a Grafana and Loki instance, run;
 

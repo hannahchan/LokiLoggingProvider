@@ -103,15 +103,15 @@ By default, the Loki logging provider does nothing. You must specify the type of
 }
 ```
 
-For a complete list of all the options you can configure and their defaults, please checkout the [`LokiLoggerOptions`](./Sources/LokiLoggingProvider/Options/LokiLoggerOptions.cs) class and its related classes. The Loki section in `appsettings.json` basically binds to this class.
+For a complete list of all the options you can configure and their defaults, please checkout the [`LokiLoggerOptions`](https://github.com/hannahchan/LokiLoggingProvider/blob/main/Sources/LokiLoggingProvider/Options/LokiLoggerOptions.cs) class and its related classes. The Loki section in `appsettings.json` basically binds to this class.
 
-Alternatively, you can configure the Loki logging provider by passing an `Action` delegate that configures an instance of [`LokiLoggerOptions`](./Sources/LokiLoggingProvider/Options/LokiLoggerOptions.cs) to the `AddLoki()` extension method.
+Alternatively, you can configure the Loki logging provider by passing an `Action` delegate that configures an instance of [`LokiLoggerOptions`](https://github.com/hannahchan/LokiLoggingProvider/blob/main/Sources/LokiLoggingProvider/Options/LokiLoggerOptions.cs) to the `AddLoki()` extension method.
 
 ## Examples
 
-Included in this repository are two example projects that use the Loki logging provider which you can use as a reference.
+There are two example projects that use the Loki logging provider which you can use as a reference.
 
-- [Example.ConsoleApp](./Sources/Example.ConsoleApp)
-- [Example.WebApp](./Sources/Example.WebApp)
+- [Example.ConsoleApp](https://github.com/hannahchan/LokiLoggingProvider/tree/main/Sources/Example.ConsoleApp)
+- [Example.WebApp](https://github.com/hannahchan/LokiLoggingProvider/tree/main/Sources/Example.WebApp)
 
-There is also [docker-compose.yml](./docker-compose.yml) file to help you spin up instances of Grafana and Loki in [Docker](https://www.docker.com) for local development purposes.
+There is also a [docker-compose.yml](https://github.com/hannahchan/LokiLoggingProvider/blob/main/docker-compose.yml) file which you can use to help spin up an instance of Grafana and Loki in [Docker](https://www.docker.com) for local development purposes.
