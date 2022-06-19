@@ -15,7 +15,7 @@ public class JsonFormatterUnitTests
     public class Format
     {
         [Fact]
-        public void When_FormattingLogEntry_Expect_DefaultMessage()
+        public void When_FormattingLogEntry_Expect_Message()
         {
             // Arrange
             JsonFormatterOptions options = new();
@@ -108,6 +108,28 @@ public class JsonFormatterUnitTests
 
             // Assert
             Assert.Equal("{\"Level\":\"Information\",\"EventId\":0,\"Message\":\"My Log Message.\"}", result);
+        }
+
+        [Fact]
+        public void When_FormattingLogEntryWithNullFormatter_Expect_MessageWithNullValue()
+        {
+            // Arrange
+            JsonFormatterOptions options = new();
+            JsonFormatter formatter = new(options);
+
+            LogEntry<string> logEntry = new(
+                logLevel: LogLevel.Information,
+                category: "MyCategory",
+                eventId: default,
+                state: "My Log Message.",
+                exception: null,
+                formatter: null);
+
+            // Act
+            string result = formatter.Format(logEntry);
+
+            // Assert
+            Assert.Equal("{\"Level\":\"Information\",\"Message\":null}", result);
         }
 
         [Fact]

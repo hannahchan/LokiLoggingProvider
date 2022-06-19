@@ -42,6 +42,28 @@ public class SimpleFormatterUnitTests
         }
 
         [Fact]
+        public void When_FormattingLogEntryWithNullFormatter_Expect_DefaultMessage()
+        {
+            // Arrange
+            SimpleFormatterOptions options = new();
+            SimpleFormatter formatter = new(options);
+
+            LogEntry<string> logEntry = new(
+                logLevel: LogLevel.Information,
+                category: default,
+                eventId: default,
+                state: "My Log Message.",
+                exception: null,
+                formatter: null);
+
+            // Act
+            string result = formatter.Format(logEntry);
+
+            // Assert
+            Assert.Equal($"[INFO] Something happened.", result);
+        }
+
+        [Fact]
         public void When_FormattingLogEntry_Expect_ArgumentOutOfRangeException()
         {
             // Arrange

@@ -25,7 +25,7 @@ internal class SimpleFormatter : ILogEntryFormatter
             message += $"{activity.GetTraceId()} - ";
         }
 
-        message += logEntry.Formatter?.Invoke(logEntry.State, logEntry.Exception);
+        message += logEntry.Formatter?.Invoke(logEntry.State, logEntry.Exception) ?? "Something happened.";
 
         if (logEntry.Exception != null)
         {
