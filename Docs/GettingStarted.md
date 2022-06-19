@@ -48,7 +48,7 @@ To spin up a Grafana and Loki instance, run;
 
     docker-compose up -d
 
-Run one of the example applicatons to send logs to Loki;
+Run one of the example applications to send logs to Loki;
 
 - [Example.ConsoleApp](../Sources/Example.ConsoleApp)
 - [Example.WebApp](../Sources/Example.WebApp)
