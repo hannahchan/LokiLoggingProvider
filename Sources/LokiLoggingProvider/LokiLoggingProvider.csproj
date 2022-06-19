@@ -5,15 +5,14 @@
 
   <PropertyGroup>
     <PackageId>LokiLoggingProvider</PackageId>
-    <PackageVersion>1.0.0-preview.1</PackageVersion>
+    <PackageVersion>1.0.0-preview.2</PackageVersion>
     <Title>Loki Logging Provider</Title>
     <Authors>Hannah Chan</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/hannahchan/LokiLoggingProvider</PackageProjectUrl>
     <Description>Send logs to Grafana Loki.</Description>
     <PackageTags>Grafana;Loki;</PackageTags>
-    <!-- See GitHub Issue https://github.com/NuGet/Home/issues/10791 -->
-    <!-- <PackageReadmeFile>README.md</PackageReadmeFile> -->
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(CAKE_BUILD)' == 'true'">
