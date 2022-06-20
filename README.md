@@ -4,6 +4,8 @@ Send logs directly to [Grafana Loki](https://grafana.com/loki) from your .NET ap
 
 For more information about logging, please checkout [_Logging in .NET_](https://docs.microsoft.com/dotnet/core/extensions/logging) and [_Logging in .NET Core and ASP.NET Core_](https://docs.microsoft.com/aspnet/core/fundamentals/logging).
 
+> **Warning**: This package has not been optimized for high performance logging.
+
 ## Usage
 
 ### Step 1. Install the Package
