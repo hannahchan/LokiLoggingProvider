@@ -16,10 +16,10 @@ services:
       - source: grafana
         target: /var/lib/grafana
         type: volume
-      - source: ./Configurations/Grafana/dashboards
+      - source: ${LOCAL_WORKSPACE_FOLDER:-.}/Configurations/Grafana/dashboards
         target: /etc/grafana/provisioning/dashboards
         type: bind
-      - source: ./Configurations/Grafana/datasources
+      - source: ${LOCAL_WORKSPACE_FOLDER:-.}/Configurations/Grafana/datasources
         target: /etc/grafana/provisioning/datasources
         type: bind
   loki:

@@ -1,20 +1,14 @@
 {
-  "build": {
-    "context": ".",
-    "dockerfile": "Dockerfile"
-  },
-  "extensions": ["ms-azuretools.vscode-docker", "ms-dotnettools.csharp"],
-  "mounts": [
-    "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
-  ],
   "name": "Loki Logging Provider",
-  "overrideCommand": false,
+  "image": "mcr.microsoft.com/devcontainers/dotnet:0-6.0",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "none"
+    },
+    "ghcr.io/devcontainers/features/docker-from-docker:1": {}
+  },
   "remoteEnv": {
     "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
   },
-  "remoteUser": "vscode",
-  "runArgs": ["--init", "--network=host"],
-  "settings": {
-    "terminal.integrated.defaultProfile.linux": "bash"
-  }
+  "runArgs": ["--network=host"]
 }
