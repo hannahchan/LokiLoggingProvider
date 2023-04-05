@@ -32,7 +32,7 @@ internal sealed class HttpPushClient : ILokiPushClient
                     {
                         new[]
                         {
-                            $"{rfc3339Timestamp.Seconds}{rfc3339Timestamp.Nanos.ToString("000000000")}",
+                            $"{rfc3339Timestamp.Seconds}{rfc3339Timestamp.Nanos:000000000}",
                             entry.Message,
                         },
                     },
