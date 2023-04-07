@@ -24,10 +24,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.21.1" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.46.0" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.46.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.46.3">
+    <PackageReference Include="Google.Protobuf" Version="3.22.1" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.52.0" />
+    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.52.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.53.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
@@ -40,7 +40,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos/github.com/gogo/protobuf/gogoproto/gogo.proto" GrpcServices="None">
+    <Protobuf Include="Protos/gogoproto/gogo.proto" GrpcServices="None">
       <SourceUrl>https://raw.githubusercontent.com/gogo/protobuf/master/gogoproto/gogo.proto</SourceUrl>
     </Protobuf>
     <Protobuf Include="Protos/github.com/grafana/loki/pkg/logproto/logproto.proto" GrpcServices="Client" AdditionalImportDirs="Protos;Protos/github.com/grafana/loki">
@@ -49,8 +49,10 @@
     <Protobuf Include="Protos/github.com/grafana/loki/pkg/logqlmodel/stats/stats.proto" GrpcServices="None" AdditionalImportDirs="Protos">
       <SourceUrl>https://raw.githubusercontent.com/grafana/loki/main/pkg/logqlmodel/stats/stats.proto</SourceUrl>
     </Protobuf>
+    <Protobuf Include="Protos/github.com/grafana/loki/pkg/push/push.proto" GrpcServices="Client" AdditionalImportDirs="Protos">
+      <SourceUrl>https://raw.githubusercontent.com/grafana/loki/main/pkg/push/push.proto</SourceUrl>
+    </Protobuf>
   </ItemGroup>
-
   <ItemGroup>
     <None Include="../../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
