@@ -49,7 +49,7 @@ public class HttpPushClientUnitTests
                     Assert.Null(request.Content.Headers.ContentType.CharSet);
 
                     Assert.Equal(
-                        "{\"streams\":[{\"stream\":{\"key1\":\"value1\",\"key2\":\"value2\"},\"values\":[[\"15750756000\",\"My log message.\"]]}]}",
+                        "{\"streams\":[{\"stream\":{\"key1\":\"value1\",\"key2\":\"value2\"},\"values\":[[\"1575075600000000000\",\"My log message.\"]]}]}",
                         request.Content.ReadAsStringAsync().Result);
                 });
         }
