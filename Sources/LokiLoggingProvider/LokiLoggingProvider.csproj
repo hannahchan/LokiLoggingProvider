@@ -5,7 +5,7 @@
 
   <PropertyGroup>
     <PackageId>LokiLoggingProvider</PackageId>
-    <PackageVersion>1.0.0-preview.3</PackageVersion>
+    <PackageVersion>1.0.0</PackageVersion>
     <Title>Loki Logging Provider</Title>
     <Authors>Hannah Chan</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
