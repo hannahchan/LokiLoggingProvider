@@ -1,4 +1,5 @@
 #pragma warning disable IDISP016 // Don't use disposed instance
+#pragma warning disable S3966 // Don't call dispose more than once
 
 namespace LokiLoggingProvider.UnitTests.Logger;
 
