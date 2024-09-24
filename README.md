@@ -1,5 +1,9 @@
 # Loki Logging Provider
 
+> **Warning**: This project is no longer maintained.
+> 
+> We now recommend using OpenTelemetry in your .NET application to export logs via the OpenTelemetry Protocol (OTLP). OpenTelemetry is a vendor-agnostic framework with strong industry support and both Grafana Loki and Grafana Cloud Logs support ingesting logs via OTLP.
+
 Send logs directly to [Grafana Loki](https://grafana.com/loki) from your .NET application. The Loki Logging Provider is a simple library that plugs into the logging framework provided in .NET.
 
 For more information about logging, please checkout [_Logging in .NET_](https://docs.microsoft.com/dotnet/core/extensions/logging) and [_Logging in .NET Core and ASP.NET Core_](https://docs.microsoft.com/aspnet/core/fundamentals/logging).
